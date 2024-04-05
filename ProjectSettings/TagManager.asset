@@ -45,7 +45,6 @@ TagManager:
   - PoweredObject
   - Rock
   - PlaceableObject
-  - SpawnDenialPoint
   layers:
   - Default
   - TransparentFX
