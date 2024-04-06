@@ -5,6 +5,7 @@ using HarmonyLib;
 using LethalLib.Modules;
 using MoreItems.Behaviours;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace MoreItems
 {
@@ -45,7 +46,7 @@ namespace MoreItems
             db.grabbableToEnemies = true;
 
             Utilities.FixMixerGroups(dynamite.spawnPrefab);
-            LethalLib.Modules.NetworkPrefabs.RegisterNetworkPrefab(dynamite.spawnPrefab);
+            NetworkPrefabs.RegisterNetworkPrefab(dynamite.spawnPrefab);
 
             TerminalNode node = ScriptableObject.CreateInstance<TerminalNode>();
             node.clearPreviousText = true;
@@ -59,9 +60,20 @@ namespace MoreItems
             kb.grabbableToEnemies = true;
 
             Utilities.FixMixerGroups(karma.spawnPrefab);
-            LethalLib.Modules.NetworkPrefabs.RegisterNetworkPrefab(karma.spawnPrefab);
+            NetworkPrefabs.RegisterNetworkPrefab(karma.spawnPrefab);
 
             Items.RegisterShopItem(karma, 500);
+
+            var sypo = bundle.LoadAsset<Item>("Assets/Sypo/SypoItem.asset");
+            var sb = sypo.spawnPrefab.AddComponent<SypoBehaviour>();
+            sb.itemProperties = sypo;
+            sb.grabbable = true;
+            sb.grabbableToEnemies = true;
+
+            Utilities.FixMixerGroups(sypo.spawnPrefab);
+            NetworkPrefabs.RegisterNetworkPrefab(sypo.spawnPrefab);
+
+            Items.RegisterScrap(sypo, 10, Levels.LevelTypes.All);
 
             harmony.PatchAll();
         }

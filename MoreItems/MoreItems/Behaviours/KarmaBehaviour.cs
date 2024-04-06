@@ -7,7 +7,7 @@ namespace MoreItems.Behaviours
 {
     internal class KarmaBehaviour : GrabbableObject
     {
-        readonly float cooldown = 15f;
+        readonly float cooldown = 10f;
         float timeSinceShot = 0f;
         NetworkVariable<bool> coolingDown = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
@@ -15,7 +15,8 @@ namespace MoreItems.Behaviours
         readonly float maxChargeBeforeExplode = 3.5f;
         readonly float explosionRadius = 5f;
         readonly int explosionDamage = 100;
-        readonly int bulletDamage = 6;
+        readonly int bulletDamage = 100;
+        readonly float energyLostPerShot = 0.5f;
         float chargeTime = 0f;
         bool charging = false;
 
@@ -48,8 +49,8 @@ namespace MoreItems.Behaviours
         public override void PocketItem()
         {
             base.PocketItem();
-            StopChargingRpc();
             activated = false;
+            StopChargingRpc();
         }
 
         public override void OnHitGround()
@@ -130,10 +131,12 @@ namespace MoreItems.Behaviours
                 }
                 if (shoot)
                 {
+                    shoot = false;
                     ShootRpc();
                 }
                 if (explode)
                 {
+                    explode = false;
                     ExplodeRpc();
                 }
             }
@@ -160,14 +163,11 @@ namespace MoreItems.Behaviours
         [ClientRpc]
         void ShootClientRpc()
         {
-            if (!shoot)
-                return;
-            shoot = false;
             sourcesDict["ShootSFX"].Play();
             sourcesDict["TrailSFX"].PlayDelayed(0.1f);
             psDict["MuzzleFlash"].Play();
             psDict["Trail"].Play();
-            this.insertedBattery.charge -= 0.5f;
+            this.insertedBattery.charge -= energyLostPerShot;
             sourcesDict["CooldownSFX"].PlayDelayed(0.35f);
             changeCooldownValueRpc(true);
             ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = unreadyColor;
@@ -175,7 +175,6 @@ namespace MoreItems.Behaviours
 
             RaycastHit hit;
             int mask = LayerMask.GetMask(new string[] { "Player", "Enemies", "Room" });
-            int playerDamage = bulletDamage * 5;
             if (Physics.Raycast(psDict["Trail"].transform.position, psDict["Trail"].transform.forward, out hit, float.MaxValue, mask))
             {
                 var player = hit.collider.GetComponent<PlayerControllerB>();
@@ -183,11 +182,11 @@ namespace MoreItems.Behaviours
                 {
                     if (IsHost || IsServer)
                     {
-                        player.DamagePlayerFromOtherClientClientRpc(playerDamage, psDict["Trail"].transform.forward, (int)player.playerClientId, player.health - playerDamage);
+                        player.DamagePlayerFromOtherClientClientRpc(bulletDamage, psDict["Trail"].transform.forward, (int)player.playerClientId, player.health - bulletDamage);
                     }
                     else
                     {
-                        player.DamagePlayerFromOtherClientServerRpc(playerDamage, psDict["Trail"].transform.forward, (int)player.playerClientId);
+                        player.DamagePlayerFromOtherClientServerRpc(bulletDamage, psDict["Trail"].transform.forward, (int)player.playerClientId);
                     }
                 }
 
@@ -257,8 +256,8 @@ namespace MoreItems.Behaviours
         {
             if (charging)
             {
-                sourcesDict["ChargeSFX"].Stop();
                 charging = false;
+                sourcesDict["ChargeSFX"].Stop();
                 chargeTime = 0f;
                 ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = readyColor;
             }
@@ -312,12 +311,9 @@ namespace MoreItems.Behaviours
         [ClientRpc]
         void ExplodeClientRpc()
         {
-            if (!explode)
-                return;
-            explode = false;
-            StopChargingRpc();
             activated = false;
             broken = true;
+            StopChargingRpc();
             sourcesDict["ExplosionSFX"].Play();
             this.insertedBattery.charge = 0f;
             ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = dangerColor;
@@ -335,17 +331,16 @@ namespace MoreItems.Behaviours
                 var playerColliderGameObject = collider.gameObject;
                 var enemyColliderRoot = collider.transform.root;
 
-                int damage = explosionDamage / 2;
                 if (player != null && !hitEntities.Exists(i => i == playerColliderGameObject.GetInstanceID()))
                 {
                     hitEntities.Add(playerColliderGameObject.GetInstanceID());
                     if (IsHost || IsServer)
                     {
-                        player.DamagePlayerFromOtherClientClientRpc(damage, player.velocityLastFrame, (int)player.playerClientId, player.health - damage);
+                        player.DamagePlayerFromOtherClientClientRpc(explosionDamage, player.velocityLastFrame, (int)player.playerClientId, player.health - explosionDamage);
                     }
                     else
                     {
-                        player.DamagePlayerFromOtherClientServerRpc(damage, player.velocityLastFrame, (int)player.playerClientId);
+                        player.DamagePlayerFromOtherClientServerRpc(explosionDamage, player.velocityLastFrame, (int)player.playerClientId);
                     }
                 }
                 var enemy = enemyColliderRoot.GetComponent<EnemyAI>();

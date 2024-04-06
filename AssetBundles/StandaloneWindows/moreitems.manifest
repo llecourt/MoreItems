@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 1568332622
+CRC: 76623507
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: dae5f355449bad9f3904d921652995bd
+    Hash: e37f874cbf6bd1d2fadf7033d79c776a
   TypeTreeHash:
     serializedVersion: 2
-    Hash: bf77d2bc5c50318659fc5cc6b10b9e46
+    Hash: 6c6ccfe660d7dbf4abe8a0827a9c6934
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: dae5f355449bad9f3904d921652995bd
+    Hash: e37f874cbf6bd1d2fadf7033d79c776a
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -45,6 +45,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: c30496d6ae6d6f907456e10a94e01ec6, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 3c36d0a92cbb1f26a39169ef0eae393a, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 1ca002da428252441b92f28d83c8a65f, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
@@ -55,6 +57,8 @@ ClassTypes:
 - Class: 198
   Script: {instanceID: 0}
 - Class: 199
+  Script: {instanceID: 0}
+- Class: 212
   Script: {instanceID: 0}
 - Class: 213
   Script: {instanceID: 0}
@@ -82,4 +86,5 @@ SerializeReferenceClassIdentifiers:
 Assets:
 - Assets/Dynamite/DynamiteItem.asset
 - Assets/Karma/KarmaItem.asset
+- Assets/Sypo/SypoItem.asset
 Dependencies: []

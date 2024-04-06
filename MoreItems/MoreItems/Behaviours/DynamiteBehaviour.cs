@@ -63,6 +63,7 @@ namespace MoreItems.Behaviours
             {
                 if (!active)
                 {
+                    active = true;
                     timeToExplode = UnityEngine.Random.Range(maxExplosionTime, minExplosionTime);
                     if (IsHost || IsServer)
                     {
@@ -72,7 +73,6 @@ namespace MoreItems.Behaviours
                     {
                         startDynamiteBurnServerRpc();
                     }
-                    active = true;
                 }
                 else
                 {
@@ -84,7 +84,7 @@ namespace MoreItems.Behaviours
         public override void PocketItem()
         {
             base.PocketItem();
-            MeshSmoke.Stop();
+            editMeshAnimRpc(false);
         }
 
         public override void EquipItem()
@@ -92,7 +92,7 @@ namespace MoreItems.Behaviours
             base.EquipItem();
             if(active)
             {
-                MeshBurnSFX.Play();
+                editMeshAnimRpc(true);
             }
         }
 
@@ -103,7 +103,8 @@ namespace MoreItems.Behaviours
             {
                 if (explodeTimer > timeToExplode)
                 {
-                    if(IsHost || IsServer)
+                    active = false;
+                    if (IsHost || IsServer)
                     {
                         ExplodeDynamiteClientRpc();
                     } 
@@ -136,7 +137,6 @@ namespace MoreItems.Behaviours
             LingeringFire.Play();
             Smoke.Play();
 
-            active = false;
             explodeTimer = 0f;
 
             int mask = LayerMask.GetMask(new string[]{ "Player", "Enemies" });
@@ -175,6 +175,37 @@ namespace MoreItems.Behaviours
             hitEntities.Clear();
             this.DiscardItem();
             Destroy(this.gameObject, EarRingSFX.clip.length);
+        }
+
+        void editMeshAnimRpc(bool active)
+        {
+            if(IsServer || IsHost)
+            {
+                editMeshAnimClientRpc(active);
+            }
+            else
+            {
+                editMeshAnimClientRpc(active);
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void editMeshAnimServerRpc(bool active)
+        {
+            editMeshAnimClientRpc(active);
+        }
+
+        [ClientRpc]
+        void editMeshAnimClientRpc(bool active)
+        {
+            if(active)
+            {
+                MeshSmoke.Play();
+            }
+            else
+            {
+                MeshSmoke.Stop();
+            }
         }
 
         public Vector3 GetGrenadeThrowDestination()
