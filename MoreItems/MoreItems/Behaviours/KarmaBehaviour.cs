@@ -2,6 +2,7 @@
 using Unity.Netcode;
 using UnityEngine;
 using GameNetcodeStuff;
+using Steamworks;
 
 namespace MoreItems.Behaviours
 {
@@ -10,6 +11,7 @@ namespace MoreItems.Behaviours
         readonly float cooldown = 10f;
         float timeSinceShot = 0f;
         NetworkVariable<bool> coolingDown = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        NetworkVariable<bool> broken = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         readonly float maxChargeBeforeShooting = 2.5f;
         readonly float maxChargeBeforeExplode = 3.5f;
@@ -17,13 +19,12 @@ namespace MoreItems.Behaviours
         readonly int explosionDamage = 100;
         readonly int bulletDamage = 100;
         readonly float energyLostPerShot = 0.5f;
+        readonly int interval = 10;
+
         float chargeTime = 0f;
         bool charging = false;
-
         bool activated = false;
         bool shoot = false;
-        bool explode = false;
-        bool broken = false;
 
         readonly string[] sources = new string[] { "ChargeSFX", "ShootSFX", "TrailSFX", "WarningSFX", "ExplosionSFX", "CooldownSFX", "CoolupSFX", "OnCdShotSFX" };
         Dictionary<string, AudioSource> sourcesDict = new Dictionary<string, AudioSource>();
@@ -50,19 +51,19 @@ namespace MoreItems.Behaviours
         {
             base.PocketItem();
             activated = false;
-            StopChargingRpc();
+            StopChargingRpc(false);
         }
 
         public override void OnHitGround()
         {
             base.OnHitGround();
-            StopChargingRpc();
+            StopChargingRpc(false);
             activated = false;
-            if (!coolingDown.Value && this.insertedBattery.charge > 0 && !broken)
+            if (!coolingDown.Value && this.insertedBattery.charge > 0 && !broken.Value)
             {
                 if (UnityEngine.Random.Range(1, 20) == 1)
                 {
-                    shoot = true;
+                    ShootRpc();
                 }
             }
         }
@@ -70,7 +71,7 @@ namespace MoreItems.Behaviours
         public override void ItemActivate(bool used, bool buttonDown = true)
         {
             base.ItemActivate(used, buttonDown);
-            if(playerHeldBy != null && !isPocketed && wasOwnerLastFrame && !broken)
+            if(playerHeldBy != null && !isPocketed && wasOwnerLastFrame && !broken.Value)
             {
                 if (buttonDown)
                 {
@@ -99,45 +100,49 @@ namespace MoreItems.Behaviours
         public override void Update()
         {
             base.Update();
-            if(!broken)
+            if (broken.Value)
+                return;
+            
+            if (coolingDown.Value)
             {
-                if (coolingDown.Value)
+                if (Time.frameCount % interval != 0)
+                    return;
+
+                timeSinceShot += Time.deltaTime * interval;
+                if (timeSinceShot > cooldown)
                 {
-                    timeSinceShot += Time.deltaTime;
-                    if (timeSinceShot > cooldown)
-                    {
-                        ResetCooldownRpc();
-                    }
+                    ResetCooldownRpc();
                 }
-                else if (wasOwnerLastFrame)
+            }
+            else if (wasOwnerLastFrame)
+            {
+                if (Time.frameCount % interval != 0)
+                    return;
+
+                if (activated)
                 {
-                    if (activated)
+                    StartChargingRpc();
+                    if (chargeTime > maxChargeBeforeExplode)
                     {
-                        StartChargingRpc();
-                        if (chargeTime > maxChargeBeforeExplode)
+                        ExplodeRpc();
+                    }
+                    chargeTime += Time.deltaTime * interval;
+                }
+                else
+                {
+                    if (chargeTime >= maxChargeBeforeShooting && chargeTime <= maxChargeBeforeExplode)
+                    {
+                        StopChargingRpc(true);
+                        if(!shoot)
                         {
-                            explode = true;
+                            shoot = true;
+                            ShootRpc();
                         }
-                        chargeTime += Time.deltaTime;
                     }
                     else
                     {
-                        if (chargeTime >= maxChargeBeforeShooting && chargeTime <= maxChargeBeforeExplode)
-                        {
-                            shoot = true;
-                        }
-                        StopChargingRpc();
+                        StopChargingRpc(false);
                     }
-                }
-                if (shoot)
-                {
-                    shoot = false;
-                    ShootRpc();
-                }
-                if (explode)
-                {
-                    explode = false;
-                    ExplodeRpc();
                 }
             }
         }
@@ -199,6 +204,7 @@ namespace MoreItems.Behaviours
                     }
                 }
             }
+            shoot = false;
         }
 
         void StartChargingRpc()
@@ -233,33 +239,36 @@ namespace MoreItems.Behaviours
             }
         }
 
-        void StopChargingRpc()
+        void StopChargingRpc(bool hasShot)
         {
             if (IsHost || IsServer)
             {
-                StopChargingClientRpc();
+                StopChargingClientRpc(hasShot);
             }
             else
             {
-                StopChargingServerRpc();
+                StopChargingServerRpc(hasShot);
             }
         }
 
         [ServerRpc(RequireOwnership = false)]
-        void StopChargingServerRpc()
+        void StopChargingServerRpc(bool hasShot)
         {
-            StopChargingClientRpc();
+            StopChargingClientRpc(hasShot);
         }
 
         [ClientRpc]
-        void StopChargingClientRpc()
+        void StopChargingClientRpc(bool hasShot)
         {
             if (charging)
             {
                 charging = false;
                 sourcesDict["ChargeSFX"].Stop();
                 chargeTime = 0f;
-                ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = readyColor;
+                if(!hasShot)
+                {
+                    ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = readyColor;
+                }
             }
         }
 
@@ -312,8 +321,8 @@ namespace MoreItems.Behaviours
         void ExplodeClientRpc()
         {
             activated = false;
-            broken = true;
-            StopChargingRpc();
+            changeBrokenValueRpc(true);
+            StopChargingRpc(false);
             sourcesDict["ExplosionSFX"].Play();
             this.insertedBattery.charge = 0f;
             ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = dangerColor;
@@ -381,7 +390,7 @@ namespace MoreItems.Behaviours
         [ClientRpc]
         void RepairClientRpc()
         {
-            broken = false;
+            changeBrokenValueRpc(false);
             if (coolingDown.Value)
             {
                 ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = unreadyColor;
@@ -408,6 +417,24 @@ namespace MoreItems.Behaviours
         void changeCooldownValueServerRpc(bool value)
         {
             coolingDown.Value = value;
+        }
+
+        void changeBrokenValueRpc(bool value)
+        {
+            if (IsHost || IsServer)
+            {
+                broken.Value = value;
+            }
+            else
+            {
+                changeBrokenValueServerRpc(value);
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void changeBrokenValueServerRpc(bool value)
+        {
+            broken.Value = value;
         }
     }
 }

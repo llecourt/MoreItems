@@ -16,6 +16,7 @@ namespace MoreItems.Behaviours
         readonly float minExplosionTime = 2f;
         readonly float maxExplosionTime = 10f;
         readonly float radius = 10f;
+        readonly int interval = 10;
         readonly int damage = 100;
 
         private AudioSource MeshBurnSFX;
@@ -99,6 +100,9 @@ namespace MoreItems.Behaviours
         public override void Update()
         {
             base.Update();
+            if (Time.frameCount % interval != 0)
+                return;
+
             if (active)
             {
                 if (explodeTimer > timeToExplode)
@@ -107,13 +111,13 @@ namespace MoreItems.Behaviours
                     if (IsHost || IsServer)
                     {
                         ExplodeDynamiteClientRpc();
-                    } 
+                    }
                     else
                     {
                         ExplodeDynamiteServerRpc();
                     }
                 }
-                this.explodeTimer += Time.deltaTime;
+                this.explodeTimer += Time.deltaTime * interval;
             }
         }
 

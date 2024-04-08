@@ -14,7 +14,7 @@ namespace MoreItems
     {
         const string guid = "LeoLR.MoreItems";
         const string name = "MoreItems";
-        const string version = "0.0.5";
+        const string version = "1.0.0";
 
         readonly Harmony harmony = new Harmony("LeoLR.MoreItems");
         public static Plugin instance;
@@ -73,7 +73,7 @@ namespace MoreItems
             Utilities.FixMixerGroups(sypo.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(sypo.spawnPrefab);
 
-            Items.RegisterScrap(sypo, 10, Levels.LevelTypes.All);
+            Items.RegisterScrap(sypo, 20, Levels.LevelTypes.All);
 
             harmony.PatchAll();
         }
