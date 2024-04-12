@@ -14,9 +14,9 @@ namespace MoreItems
     {
         const string guid = "LeoLR.MoreItems";
         const string name = "MoreItems";
-        const string version = "1.0.0";
+        const string version = "4.0.0";
 
-        readonly Harmony harmony = new Harmony("LeoLR.MoreItems");
+        Harmony harmony = new Harmony("LeoLR.MoreItems");
         public static Plugin instance;
 
         void Awake()
@@ -44,10 +44,8 @@ namespace MoreItems
             db.itemProperties = dynamite;
             db.grabbable = true;
             db.grabbableToEnemies = true;
-
             Utilities.FixMixerGroups(dynamite.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(dynamite.spawnPrefab);
-
             TerminalNode node = ScriptableObject.CreateInstance<TerminalNode>();
             node.clearPreviousText = true;
             node.displayText = "Boom boom";
@@ -58,10 +56,8 @@ namespace MoreItems
             kb.itemProperties = karma;
             kb.grabbable = true;
             kb.grabbableToEnemies = true;
-
             Utilities.FixMixerGroups(karma.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(karma.spawnPrefab);
-
             Items.RegisterShopItem(karma, 500);
 
             var sypo = bundle.LoadAsset<Item>("Assets/Sypo/SypoItem.asset");
@@ -69,18 +65,28 @@ namespace MoreItems
             sb.itemProperties = sypo;
             sb.grabbable = true;
             sb.grabbableToEnemies = true;
-
             Utilities.FixMixerGroups(sypo.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(sypo.spawnPrefab);
-
             Items.RegisterScrap(sypo, 20, Levels.LevelTypes.All);
 
             var minikit = bundle.LoadAsset<Item>("Assets/Minikit/MinikitItem.asset");
-
             Utilities.FixMixerGroups(minikit.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(minikit.spawnPrefab);
-
             Items.RegisterScrap(minikit, 20, Levels.LevelTypes.All);
+
+            var coil = bundle.LoadAsset<Item>("Assets/GravityCoil/GravityCoilItem.asset");
+            var cb = coil.spawnPrefab.AddComponent<GravityCoilBehaviour>();
+            cb.itemProperties = coil;
+            cb.grabbable = true;
+            cb.grabbableToEnemies = true;
+            Utilities.FixMixerGroups(coil.spawnPrefab);
+            NetworkPrefabs.RegisterNetworkPrefab(coil.spawnPrefab);
+            Items.RegisterScrap(coil, 20, Levels.LevelTypes.All);
+
+            var frame = bundle.LoadAsset<Item>("Assets/FramedPic/FramedPicItem.asset");
+            Utilities.FixMixerGroups(frame.spawnPrefab);
+            NetworkPrefabs.RegisterNetworkPrefab(frame.spawnPrefab);
+            Items.RegisterScrap(frame, 20, Levels.LevelTypes.All);
 
             harmony.PatchAll();
         }

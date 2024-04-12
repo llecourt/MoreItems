@@ -8,7 +8,7 @@ namespace MoreItems.Behaviours
 {
     internal class SypoBehaviour : GrabbableObject
     {
-        readonly string[] sources = new string[] { "criSFX" };
+        string[] sources = new string[] { "criSFX" };
         Dictionary<string, AudioSource> sourcesDict = new Dictionary<string, AudioSource>();
 
         void Awake()

@@ -10,26 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c30496d6ae6d6f907456e10a94e01ec6, type: 3}
-  m_Name: MinikitItem
+  m_Name: GravityCoilItem
   m_EditorClassIdentifier: 
   itemId: 0
-  itemName: Minikit
+  itemName: Gravity Coil
   spawnPositionTypes: []
   twoHanded: 0
   twoHandedAnimation: 0
   canBeGrabbedBeforeGameStart: 0
-  weight: 1.1
+  weight: 1.01
   itemIsTrigger: 0
   holdButtonUse: 0
   itemSpawnsOnGround: 1
-  isConductiveMetal: 0
+  isConductiveMetal: 1
   isScrap: 1
   creditsWorth: 100
   lockedInDemo: 0
   highestSalePercentage: 0
   maxValue: 120
   minValue: 80
-  spawnPrefab: {fileID: 3343918987450926563, guid: a26f68964fdc8a244beb85fb68bf9f70,
+  spawnPrefab: {fileID: 64060146082963161, guid: 0869afc2ef37cf44985d5f7213300343,
     type: 3}
   requiresBattery: 0
   batteryUsage: 0
@@ -40,8 +40,8 @@ MonoBehaviour:
   pocketAnim: 
   throwAnim: 
   grabAnimationTime: 0
-  grabSFX: {fileID: 8300000, guid: c0c6f96427066c24797adb990e7e0c8d, type: 3}
-  dropSFX: {fileID: 8300000, guid: a0b4bbfcc1f40844e9310d00c0e11515, type: 3}
+  grabSFX: {fileID: 8300000, guid: 697e932e13a3ccc48a435cd837ea4f39, type: 3}
+  dropSFX: {fileID: 8300000, guid: 1b6757d740e189045aa78f12f6fea53a, type: 3}
   pocketSFX: {fileID: 0}
   throwSFX: {fileID: 0}
   syncGrabFunction: 0
@@ -55,8 +55,8 @@ MonoBehaviour:
   floorYOffset: 0
   allowDroppingAheadOfPlayer: 0
   restingRotation: {x: 0, y: 0, z: 0}
-  rotationOffset: {x: 90, y: 0, z: -90}
-  positionOffset: {x: -0.2, y: -0.05, z: -0.1}
+  rotationOffset: {x: 0, y: -90, z: 0}
+  positionOffset: {x: 0.2, y: -0.05, z: -0.1}
   meshOffset: 0
   meshVariants: []
   materialVariants: []

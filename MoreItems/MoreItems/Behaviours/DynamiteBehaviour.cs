@@ -10,14 +10,14 @@ namespace MoreItems.Behaviours
         public Ray grenadeThrowRay;
         public RaycastHit grenadeHit;
 
+        float minExplosionTime = 2f;
+        float maxExplosionTime = 10f;
         float explodeTimer = 0f;
         float timeToExplode = 999f;
+        float radius = 10f;
 
-        readonly float minExplosionTime = 2f;
-        readonly float maxExplosionTime = 10f;
-        readonly float radius = 10f;
-        readonly int interval = 10;
-        readonly int damage = 100;
+        int damage = 100;
+        int interval = 10;
 
         private AudioSource MeshBurnSFX;
         private AudioSource ExplosionSFX;

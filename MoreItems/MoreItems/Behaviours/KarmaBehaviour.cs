@@ -8,27 +8,28 @@ namespace MoreItems.Behaviours
 {
     internal class KarmaBehaviour : GrabbableObject
     {
-        readonly float cooldown = 10f;
-        float timeSinceShot = 0f;
         NetworkVariable<bool> coolingDown = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         NetworkVariable<bool> broken = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-        readonly float maxChargeBeforeShooting = 2.5f;
-        readonly float maxChargeBeforeExplode = 3.5f;
-        readonly float explosionRadius = 5f;
-        readonly int explosionDamage = 100;
-        readonly int bulletDamage = 100;
-        readonly float energyLostPerShot = 0.5f;
-        readonly int interval = 10;
-
+        float cooldown = 10f;
+        float timeSinceShot = 0f;
+        float maxChargeBeforeShooting = 2.5f;
+        float maxChargeBeforeExplode = 3.5f;
         float chargeTime = 0f;
+        float explosionRadius = 5f;
+        float energyLostPerShot = 0.5f;
+        
+        int bulletDamage = 100;
+        int explosionDamage = 100;
+        int interval = 10;
+
         bool charging = false;
         bool activated = false;
         bool shoot = false;
 
-        readonly string[] sources = new string[] { "ChargeSFX", "ShootSFX", "TrailSFX", "WarningSFX", "ExplosionSFX", "CooldownSFX", "CoolupSFX", "OnCdShotSFX" };
+        string[] sources = new string[] { "ChargeSFX", "ShootSFX", "TrailSFX", "WarningSFX", "ExplosionSFX", "CooldownSFX", "CoolupSFX", "OnCdShotSFX" };
         Dictionary<string, AudioSource> sourcesDict = new Dictionary<string, AudioSource>();
-        readonly string[] ps = new string[] { "MuzzleFlash", "Trail", "LingeringFire", "MainBlast" };
+        string[] ps = new string[] { "MuzzleFlash", "Trail", "LingeringFire", "MainBlast" };
         Dictionary<string, ParticleSystem> psDict = new Dictionary<string, ParticleSystem>();
 
         Color readyColor = new Color32(20, 20, 20, 255);
