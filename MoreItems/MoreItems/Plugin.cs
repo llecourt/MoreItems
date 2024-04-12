@@ -14,7 +14,7 @@ namespace MoreItems
     {
         const string guid = "LeoLR.MoreItems";
         const string name = "MoreItems";
-        const string version = "4.0.0";
+        const string version = "4.1.0";
 
         Harmony harmony = new Harmony("LeoLR.MoreItems");
         public static Plugin instance;
@@ -81,7 +81,7 @@ namespace MoreItems
             cb.grabbableToEnemies = true;
             Utilities.FixMixerGroups(coil.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(coil.spawnPrefab);
-            Items.RegisterScrap(coil, 20, Levels.LevelTypes.All);
+            Items.RegisterScrap(coil, 200000000, Levels.LevelTypes.All);
 
             var frame = bundle.LoadAsset<Item>("Assets/FramedPic/FramedPicItem.asset");
             Utilities.FixMixerGroups(frame.spawnPrefab);
