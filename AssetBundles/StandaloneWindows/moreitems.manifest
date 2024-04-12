@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 76623507
+CRC: 1988005382
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e37f874cbf6bd1d2fadf7033d79c776a
+    Hash: 0b274de4fca2c39ae3a7fd3463227742
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 6c6ccfe660d7dbf4abe8a0827a9c6934
+    Hash: 9fe7ecec51129c1621ac98d20278d864
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: e37f874cbf6bd1d2fadf7033d79c776a
+    Hash: 0b274de4fca2c39ae3a7fd3463227742
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -32,9 +32,15 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 65
   Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
 - Class: 82
   Script: {instanceID: 0}
 - Class: 83
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
   Script: {instanceID: 0}
 - Class: 108
   Script: {instanceID: 0}
@@ -46,6 +52,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: c30496d6ae6d6f907456e10a94e01ec6, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 3c36d0a92cbb1f26a39169ef0eae393a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 3d0cf24d2ccc3b7eab72048d0f57c437, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 1ca002da428252441b92f28d83c8a65f, type: 3}
 - Class: 114
@@ -69,6 +77,8 @@ ClassTypes:
 - Class: 245
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: Battery
 - AssemblyName: Unity.ProBuilder
   ClassName: UnityEngine.ProBuilder.AutoUnwrapSettings
 - AssemblyName: Unity.ProBuilder
@@ -85,6 +95,7 @@ SerializeReferenceClassIdentifiers:
   ClassName: UnityEngine.Rendering.HighDefinition.IntScalableSettingValue
 Assets:
 - Assets/Dynamite/DynamiteItem.asset
+- Assets/Minikit/MinikitItem.asset
 - Assets/Karma/KarmaItem.asset
 - Assets/Sypo/SypoItem.asset
 Dependencies: []

@@ -75,6 +75,13 @@ namespace MoreItems
 
             Items.RegisterScrap(sypo, 20, Levels.LevelTypes.All);
 
+            var minikit = bundle.LoadAsset<Item>("Assets/Minikit/MinikitItem.asset");
+
+            Utilities.FixMixerGroups(minikit.spawnPrefab);
+            NetworkPrefabs.RegisterNetworkPrefab(minikit.spawnPrefab);
+
+            Items.RegisterScrap(minikit, 20, Levels.LevelTypes.All);
+
             harmony.PatchAll();
         }
     }

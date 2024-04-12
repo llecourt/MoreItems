@@ -1,0 +1,24 @@
+ManifestFileVersion: 0
+CRC: 1171214198
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 32157e241d8eb8db042cf94f3d37fd17
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: b30fce1a9ad74efb72be6c308c56e365
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 32157e241d8eb8db042cf94f3d37fd17
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Texture.mat
+Dependencies: []
