@@ -38,10 +38,7 @@ namespace MoreItems.Behaviours
         public override void OnHitGround()
         {
             base.OnHitGround();
-            if (boostedPlayer == null)
-                return;
-            boostedPlayer.jumpForce = baseJumpForce;
-            boostedPlayer = null;
+            defaultJump();
         }
 
         public override void GrabItem()
@@ -69,6 +66,51 @@ namespace MoreItems.Behaviours
             boostedPlayer = playerHeldBy;
             boostedPlayer.jumpForce = baseJumpForce * multiplier;
             active = true;
+        }
+
+        public override void OnPlaceObject()
+        {
+            base.OnPlaceObject();
+            defaultJump();
+        }
+
+        public override void DestroyObjectInHand(PlayerControllerB playerHolding)
+        {
+            base.DestroyObjectInHand(playerHolding);
+            defaultJump(ref playerHolding);
+        }
+
+        public override void DiscardItem()
+        {
+            base.DiscardItem();
+            defaultJump();
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            defaultJump();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            base.OnNetworkDespawn();
+            defaultJump();
+        }
+
+        void defaultJump()
+        {
+            if (boostedPlayer == null)
+                return;
+            boostedPlayer.jumpForce = baseJumpForce;
+            boostedPlayer = null;
+        }
+
+        void defaultJump(ref PlayerControllerB player)
+        {
+            if (player == null)
+                return;
+            player.jumpForce = baseJumpForce;
         }
 
         void PlayJumpSFXRpc()

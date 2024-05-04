@@ -14,7 +14,7 @@ namespace MoreItems.Behaviours
         float maxExplosionTime = 10f;
         float explodeTimer = 0f;
         float timeToExplode = 999f;
-        float radius = 10f;
+        float radius = 8f;
 
         int damage = 100;
         int interval = 10;
