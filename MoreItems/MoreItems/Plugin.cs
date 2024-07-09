@@ -88,6 +88,15 @@ namespace MoreItems
             NetworkPrefabs.RegisterNetworkPrefab(frame.spawnPrefab);
             Items.RegisterScrap(frame, 20, Levels.LevelTypes.All);
 
+            var phone = bundle.LoadAsset<Item>("Assets/Phone/PhoneItem.asset");
+            var ph = phone.spawnPrefab.AddComponent<PhoneBehaviour>();
+            ph.itemProperties = phone;
+            ph.grabbable = true;
+            ph.grabbableToEnemies = true;
+            Utilities.FixMixerGroups(phone.spawnPrefab);
+            NetworkPrefabs.RegisterNetworkPrefab(phone.spawnPrefab);
+            Items.RegisterScrap(phone, 20, Levels.LevelTypes.All);
+
             harmony.PatchAll();
         }
     }
