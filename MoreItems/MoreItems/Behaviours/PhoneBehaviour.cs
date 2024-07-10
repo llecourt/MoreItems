@@ -100,32 +100,51 @@ namespace MoreItems.Behaviours
             sourcesDict["pictureSFX"].Play();
             flashAnimator.Play("base.flash");
 
-            RaycastHit hit;
-            int mask = LayerMask.GetMask(new string[] { "Player", "Enemies", "Room" });
-            if (Physics.BoxCast(playerHeldBy.transform.position, playerHeldBy.transform.localScale * 2f, playerHeldBy.transform.forward, out hit, playerHeldBy.transform.rotation, 10f, mask))
+            int mask = LayerMask.GetMask(new string[] { "Player", "Enemies" });
+            List<int> hitEntities = new List<int>();
+            Ray ray = new Ray(playerHeldBy.transform.position, playerHeldBy.transform.forward);
+
+            Collider[] colliders = Physics.OverlapCapsule(ray.GetPoint(4f), ray.GetPoint(5f), 4f, mask);
+            foreach (Collider collider in colliders)
             {
-                print("boxcast hit !!!");
-                print(hit.collider);
-                var player = hit.collider.GetComponent<PlayerControllerB>();
-                if (player != null)
+                var player = collider.GetComponent<PlayerControllerB>();
+
+                var playerColliderGameObject = collider.gameObject;
+                var enemyColliderRoot = collider.transform.root;
+
+                if (player != null && !hitEntities.Exists(i => i == playerColliderGameObject.GetInstanceID()))
                 {
-                    print("player hit !!!");
-                    if(player.playerClientId == GameNetworkManager.Instance.localPlayerController.playerClientId)
+                    hitEntities.Add(playerColliderGameObject.GetInstanceID());
+
+                    if (player.playerClientId == GameNetworkManager.Instance.localPlayerController.playerClientId 
+                        && player.playerClientId != playerHeldBy.playerClientId
+                        && !Physics.Linecast(playerHeldBy.transform.position + Vector3.up * 0.5f, player.transform.position + Vector3.up * 0.5f, StartOfRound.Instance.collidersAndRoomMaskAndDefault, QueryTriggerInteraction.Ignore))
                     {
-                        HUDManager.Instance.flashFilter = 0.6f;
+                        float flashStr = determineFlashStrength(playerHeldBy.transform.forward, player.transform.forward);
+                        HUDManager.Instance.flashFilter = flashStr;
                     }
                 }
 
-                var enemy = hit.collider.GetComponent<EnemyAICollisionDetect>();
-                if (enemy != null)
+                var enemy = enemyColliderRoot.GetComponent<EnemyAI>();
+
+                if (enemy != null && !hitEntities.Exists(i => i == enemyColliderRoot.gameObject.GetInstanceID()))
                 {
-                    if (!enemy.mainScript.isEnemyDead)
+                    hitEntities.Add(enemyColliderRoot.gameObject.GetInstanceID());
+
+                    if(!Physics.Linecast(playerHeldBy.transform.position + Vector3.up * 0.5f, enemy.transform.position + Vector3.up * 0.5f, StartOfRound.Instance.collidersAndRoomMaskAndDefault, QueryTriggerInteraction.Ignore))
                     {
-                        print("enemy hit !!!");
-                        enemy.mainScript.SetEnemyStunned(true, 0.5f, playerHeldBy);
+                        float flashStr = determineFlashStrength(playerHeldBy.transform.forward, enemy.transform.forward);
+                        enemy.SetEnemyStunned(true, flashStr, playerHeldBy);
                     }
                 }
             }
+        }
+
+        float determineFlashStrength(Vector3 playerHeld, Vector3 entityHit)
+        {
+            float dot = Vector3.Dot(playerHeld.normalized, entityHit.normalized);
+            double flashStr = Math.Max(0, -0.1 + 0.7 * -dot);
+            return Convert.ToSingle(flashStr);
         }
     }
 }

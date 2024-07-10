@@ -50,6 +50,7 @@ namespace MoreItems
             node.clearPreviousText = true;
             node.displayText = "Boom boom";
             Items.RegisterShopItem(dynamite, null, null, node, 50);
+            print("dynamite loaded");
 
             var karma = bundle.LoadAsset<Item>("Assets/Karma/KarmaItem.asset");
             KarmaBehaviour kb = karma.spawnPrefab.AddComponent<KarmaBehaviour>();
@@ -95,7 +96,8 @@ namespace MoreItems
             ph.grabbableToEnemies = true;
             Utilities.FixMixerGroups(phone.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(phone.spawnPrefab);
-            Items.RegisterScrap(phone, 20, Levels.LevelTypes.All);
+            // Items.RegisterScrap(phone, 20, Levels.LevelTypes.All);
+            Items.RegisterShopItem(phone, 0);
 
             harmony.PatchAll();
         }
