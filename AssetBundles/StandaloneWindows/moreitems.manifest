@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2043536468
+CRC: 3743044321
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 88d6e9797598d8caef567f98429bada3
+    Hash: 3ad030e573ddeb4bc551474717f84004
   TypeTreeHash:
     serializedVersion: 2
     Hash: 9fe7ecec51129c1621ac98d20278d864
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 88d6e9797598d8caef567f98429bada3
+    Hash: 3ad030e573ddeb4bc551474717f84004
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -99,6 +99,7 @@ Assets:
 - Assets/Phone/PhoneItem.asset
 - Assets/Minikit/MinikitItem.asset
 - Assets/Karma/KarmaItem.asset
+- Assets/SlapHand/SlapHandItem.asset
 - Assets/GravityCoil/GravityCoilItem.asset
 - Assets/Megaphone/MegaphoneItem.asset
 - Assets/Sypo/SypoItem.asset

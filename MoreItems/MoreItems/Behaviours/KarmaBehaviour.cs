@@ -41,6 +41,8 @@ namespace MoreItems.Behaviours
 
         void Awake()
         {
+            grabbable = true;
+            grabbableToEnemies = true;
             sourcesDict = Utils.getAllAudioSources(this.gameObject, "KarmaSFX", sources);
             psDict = Utils.getAllParticleSystems(this.gameObject, "KarmaParticles", ps);
             ScopeChargeTimer = this.gameObject.transform.Find("ScopeChargeTimer").gameObject;
@@ -177,7 +179,9 @@ namespace MoreItems.Behaviours
             sourcesDict["CooldownSFX"].PlayDelayed(0.35f);
             changeCooldownValueRpc(true);
             ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = unreadyColor;
-            HUDManager.Instance.ShakeCamera(ScreenShakeType.Big);
+
+            if(playerHeldBy != null && playerHeldBy.playerClientId == GameNetworkManager.Instance.localPlayerController.playerClientId)
+                HUDManager.Instance.ShakeCamera(ScreenShakeType.Big);
 
             RaycastHit hit;
             int mask = LayerMask.GetMask(new string[] { "Player", "Enemies", "Room" });
@@ -330,44 +334,8 @@ namespace MoreItems.Behaviours
 
             psDict["LingeringFire"].Play();
             psDict["MainBlast"].Play();
-            int mask = LayerMask.GetMask(new string[] { "Player", "Enemies" });
-            List<int> hitEntities = new List<int>();
 
-            Collider[] colliders = Physics.OverlapSphere(this.gameObject.transform.position, explosionRadius, mask);
-            foreach (Collider collider in colliders)
-            {
-                var player = collider.GetComponent<PlayerControllerB>();
-
-                var playerColliderGameObject = collider.gameObject;
-                var enemyColliderRoot = collider.transform.root;
-
-                if (player != null && !hitEntities.Exists(i => i == playerColliderGameObject.GetInstanceID()))
-                {
-                    hitEntities.Add(playerColliderGameObject.GetInstanceID());
-                    if (IsHost || IsServer)
-                    {
-                        player.DamagePlayerFromOtherClientClientRpc(explosionDamage, player.velocityLastFrame, (int)player.playerClientId, player.health - explosionDamage);
-                    }
-                    else
-                    {
-                        player.DamagePlayerFromOtherClientServerRpc(explosionDamage, player.velocityLastFrame, (int)player.playerClientId);
-                    }
-                }
-                var enemy = enemyColliderRoot.GetComponent<EnemyAI>();
-
-                if (enemy != null && !hitEntities.Exists(i => i == enemyColliderRoot.gameObject.GetInstanceID()))
-                {
-                    if (!enemy.isEnemyDead)
-                    {
-                        hitEntities.Add(enemyColliderRoot.gameObject.GetInstanceID());
-                        if (enemy.creatureVoice != null && enemy.dieSFX != null)
-                        {
-                            enemy.creatureVoice.PlayOneShot(enemy.dieSFX);
-                        }
-                        enemy.KillEnemy(true);
-                    }
-                }
-            }
+            Utils.Explode(this.gameObject, 5f, 50, 180);
         }
 
         void RepairRpc()

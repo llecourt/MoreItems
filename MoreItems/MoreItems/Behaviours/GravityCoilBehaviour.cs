@@ -18,6 +18,8 @@ namespace MoreItems.Behaviours
         bool active = false;
         void Awake()
         {
+            grabbable = true;
+            grabbableToEnemies = true;
             sourcesDict = Utils.getAllAudioSources(this.gameObject, "CoilSFX", sources);
         }
 

@@ -14,9 +14,6 @@ namespace MoreItems.Behaviours
         float maxExplosionTime = 10f;
         float explodeTimer = 0f;
         float timeToExplode = 999f;
-        float radius = 8f;
-
-        int damage = 100;
         int interval = 10;
 
         private AudioSource MeshBurnSFX;
@@ -32,6 +29,8 @@ namespace MoreItems.Behaviours
 
         void Awake()
         {
+            grabbable = true;
+            grabbableToEnemies = true;
             this.MeshBurnSFX = Utils.getAudioSource(this.gameObject, "DynamiteSFX", "MeshBurnSFX");
             this.ExplosionSFX = Utils.getAudioSource(this.gameObject, "DynamiteSFX", "ExplosionSFX");
             this.EarRingSFX = Utils.getAudioSource(this.gameObject, "DynamiteSFX", "EarRingSFX");
@@ -130,7 +129,9 @@ namespace MoreItems.Behaviours
         [ClientRpc]
         public void ExplodeDynamiteClientRpc()
         {
-            Utils.destroyObj(this.gameObject, "Base");
+            grabbable = false;
+            grabbableToEnemies = false;
+
             MeshBurnSFX.Stop();
             MeshSmoke.Stop();
 
@@ -143,42 +144,13 @@ namespace MoreItems.Behaviours
 
             explodeTimer = 0f;
 
-            int mask = LayerMask.GetMask(new string[]{ "Player", "Enemies" });
-            List<int> hitEntities = new List<int>();
+            Utils.Explode(this.gameObject, 8f, 50, 300, playerHeldBy == null);
 
-            Collider[] colliders = Physics.OverlapSphere(this.gameObject.transform.position, radius, mask);
-            foreach(Collider collider in colliders)
-            {
-                var player = collider.GetComponent<PlayerControllerB>();
+            if (playerHeldBy != null)
+                this.DestroyObjectInHand(playerHeldBy);
 
-                var playerColliderGameObject = collider.gameObject;
-                var enemyColliderRoot = collider.transform.root;
-
-                if (player != null && !hitEntities.Exists(i => i == playerColliderGameObject.GetInstanceID()))
-                {
-                    hitEntities.Add(playerColliderGameObject.GetInstanceID());
-                    player.DamagePlayer(damage, causeOfDeath: CauseOfDeath.Blast);
-                    player.statusEffectAudio.PlayOneShot(EarRingSFX.clip);
-                }
-                var enemy = enemyColliderRoot.GetComponent<EnemyAI>();
-
-                if (enemy != null && !hitEntities.Exists(i => i == enemyColliderRoot.gameObject.GetInstanceID()))
-                {
-                    if (!enemy.isEnemyDead)
-                    {
-                        hitEntities.Add(enemyColliderRoot.gameObject.GetInstanceID());
-                        if(enemy.creatureVoice != null && enemy.dieSFX != null)
-                        {
-                            enemy.creatureVoice.PlayOneShot(enemy.dieSFX);
-                        }
-                        enemy.KillEnemy(true);
-                    }
-                }
-            }
-
-            hitEntities.Clear();
-            this.DiscardItem();
-            Destroy(this.gameObject, EarRingSFX.clip.length);
+            Utils.destroyObj(this.gameObject, "Base");
+            Destroy(this.gameObject, ExplosionSFX.clip.length);
         }
 
         void editMeshAnimRpc(bool active)
@@ -189,7 +161,7 @@ namespace MoreItems.Behaviours
             }
             else
             {
-                editMeshAnimClientRpc(active);
+                editMeshAnimServerRpc(active);
             }
         }
 

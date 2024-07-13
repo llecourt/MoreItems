@@ -14,7 +14,7 @@ namespace MoreItems
     {
         const string guid = "LeoLR.MoreItems";
         const string name = "MoreItems";
-        const string version = "4.2.0";
+        const string version = "6.1.0";
 
         Harmony harmony = new Harmony("LeoLR.MoreItems");
         public static Plugin instance;
@@ -40,32 +40,22 @@ namespace MoreItems
             AssetBundle bundle = AssetBundle.LoadFromFile(assetDir);
 
             var dynamite = bundle.LoadAsset<Item>("Assets/Dynamite/DynamiteItem.asset");
-            DynamiteBehaviour db = dynamite.spawnPrefab.AddComponent<DynamiteBehaviour>();
-            db.itemProperties = dynamite;
-            db.grabbable = true;
-            db.grabbableToEnemies = true;
+            dynamite.spawnPrefab.AddComponent<DynamiteBehaviour>().itemProperties = dynamite;
             Utilities.FixMixerGroups(dynamite.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(dynamite.spawnPrefab);
             TerminalNode node = ScriptableObject.CreateInstance<TerminalNode>();
             node.clearPreviousText = true;
             node.displayText = "Boom boom";
             Items.RegisterShopItem(dynamite, null, null, node, 50);
-            print("dynamite loaded");
 
             var karma = bundle.LoadAsset<Item>("Assets/Karma/KarmaItem.asset");
-            KarmaBehaviour kb = karma.spawnPrefab.AddComponent<KarmaBehaviour>();
-            kb.itemProperties = karma;
-            kb.grabbable = true;
-            kb.grabbableToEnemies = true;
+            karma.spawnPrefab.AddComponent<KarmaBehaviour>().itemProperties = karma;
             Utilities.FixMixerGroups(karma.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(karma.spawnPrefab);
             Items.RegisterShopItem(karma, 500);
 
             var sypo = bundle.LoadAsset<Item>("Assets/Sypo/SypoItem.asset");
-            var sb = sypo.spawnPrefab.AddComponent<SypoBehaviour>();
-            sb.itemProperties = sypo;
-            sb.grabbable = true;
-            sb.grabbableToEnemies = true;
+            sypo.spawnPrefab.AddComponent<SypoBehaviour>().itemProperties = sypo;
             Utilities.FixMixerGroups(sypo.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(sypo.spawnPrefab);
             Items.RegisterScrap(sypo, 20, Levels.LevelTypes.All);
@@ -76,10 +66,7 @@ namespace MoreItems
             Items.RegisterScrap(minikit, 20, Levels.LevelTypes.All);
 
             var coil = bundle.LoadAsset<Item>("Assets/GravityCoil/GravityCoilItem.asset");
-            var cb = coil.spawnPrefab.AddComponent<GravityCoilBehaviour>();
-            cb.itemProperties = coil;
-            cb.grabbable = true;
-            cb.grabbableToEnemies = true;
+            coil.spawnPrefab.AddComponent<GravityCoilBehaviour>().itemProperties = coil;
             Utilities.FixMixerGroups(coil.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(coil.spawnPrefab);
             Items.RegisterScrap(coil, 20, Levels.LevelTypes.All);
@@ -90,14 +77,16 @@ namespace MoreItems
             Items.RegisterScrap(frame, 20, Levels.LevelTypes.All);
 
             var phone = bundle.LoadAsset<Item>("Assets/Phone/PhoneItem.asset");
-            var ph = phone.spawnPrefab.AddComponent<PhoneBehaviour>();
-            ph.itemProperties = phone;
-            ph.grabbable = true;
-            ph.grabbableToEnemies = true;
+            phone.spawnPrefab.AddComponent<PhoneBehaviour>().itemProperties = phone;
             Utilities.FixMixerGroups(phone.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(phone.spawnPrefab);
-            // Items.RegisterScrap(phone, 20, Levels.LevelTypes.All);
-            Items.RegisterShopItem(phone, 0);
+            Items.RegisterScrap(phone, 20, Levels.LevelTypes.All);
+
+            var slaphand = bundle.LoadAsset<Item>("Assets/SlapHand/SlapHandItem.asset");
+            slaphand.spawnPrefab.AddComponent<SlapHandBehaviour>().itemProperties = slaphand;
+            Utilities.FixMixerGroups(slaphand.spawnPrefab);
+            NetworkPrefabs.RegisterNetworkPrefab(slaphand.spawnPrefab);
+            Items.RegisterScrap(slaphand, 20, Levels.LevelTypes.All);
 
             harmony.PatchAll();
         }

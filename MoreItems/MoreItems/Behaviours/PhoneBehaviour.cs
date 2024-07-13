@@ -21,6 +21,8 @@ namespace MoreItems.Behaviours
 
         void Awake()
         {
+            grabbable = true;
+            grabbableToEnemies = true;
             sourcesDict = Utils.getAllAudioSources(this.gameObject, "PhoneSFX", sources);
             this.insertedBattery.charge = 1f;
 
