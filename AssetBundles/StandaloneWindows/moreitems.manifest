@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 3743044321
+CRC: 4065163108
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 3ad030e573ddeb4bc551474717f84004
+    Hash: a1b68b7af8d4bc81b53e05fb16006883
   TypeTreeHash:
     serializedVersion: 2
     Hash: 9fe7ecec51129c1621ac98d20278d864
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 3ad030e573ddeb4bc551474717f84004
+    Hash: a1b68b7af8d4bc81b53e05fb16006883
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -94,6 +94,7 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
   ClassName: UnityEngine.Rendering.HighDefinition.IntScalableSettingValue
 Assets:
+- Assets/Warp/WarpItem.asset
 - Assets/FramedPic/FramedPicItem.asset
 - Assets/Dynamite/DynamiteItem.asset
 - Assets/Phone/PhoneItem.asset

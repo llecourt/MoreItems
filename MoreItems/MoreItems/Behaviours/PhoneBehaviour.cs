@@ -35,7 +35,7 @@ namespace MoreItems.Behaviours
             if(this.insertedBattery.charge > 0)
             {
                 flashRpc();
-                this.insertedBattery.charge -= 0.334f;
+                this.insertedBattery.charge -= 0.1f;
             }
         }
 
@@ -122,7 +122,7 @@ namespace MoreItems.Behaviours
                         && player.playerClientId != playerHeldBy.playerClientId
                         && !Physics.Linecast(playerHeldBy.transform.position + Vector3.up * 0.5f, player.transform.position + Vector3.up * 0.5f, StartOfRound.Instance.collidersAndRoomMaskAndDefault, QueryTriggerInteraction.Ignore))
                     {
-                        float flashStr = determineFlashStrength(playerHeldBy.transform.forward, player.transform.forward);
+                        float flashStr = determineFlashStrength(playerHeldBy.transform.forward, player.transform.forward) / 2;
                         HUDManager.Instance.flashFilter = flashStr;
                     }
                 }
@@ -145,7 +145,7 @@ namespace MoreItems.Behaviours
         float determineFlashStrength(Vector3 playerHeld, Vector3 entityHit)
         {
             float dot = Vector3.Dot(playerHeld.normalized, entityHit.normalized);
-            double flashStr = Math.Max(0, -0.1 + 0.7 * -dot);
+            double flashStr = Math.Max(0, -0.1 + 2 * -dot);
             return Convert.ToSingle(flashStr);
         }
     }

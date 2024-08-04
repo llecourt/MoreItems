@@ -16,11 +16,9 @@ namespace MoreItems.Behaviours
         float maxChargeBeforeShooting = 2.5f;
         float maxChargeBeforeExplode = 3.5f;
         float chargeTime = 0f;
-        float explosionRadius = 5f;
         float energyLostPerShot = 0.5f;
         
         int bulletDamage = 100;
-        int explosionDamage = 100;
         int interval = 10;
 
         bool charging = false;

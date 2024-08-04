@@ -8,85 +8,153 @@ using UnityEngine;
 
 namespace MoreItems.Behaviours
 {
-    internal class SlapHandBehaviour : Shovel
+    internal class SlapHandBehaviour : GrabbableObject
     {
         string[] sources = new string[] { "reelSFX", "swingSFX", "hitSFX", "goofySFX" };
         Dictionary<string, AudioSource> sourcesDict = new Dictionary<string, AudioSource>();
 
-        bool hittingPlayer = false;
+        float time = 1.0f;
+        float hitCD = 0.4f;
+        float timeSinceHit;
+        bool startCounting = false;
+        int slapHandMask = 1084754248;
+        bool reelingUp = false;
+        Coroutine reelingUpCoroutine = null;
+        float slapHandHitRadius = 0.8f;
+        float slapHandHitDistance = 1.5f;
 
         void Awake()
         {
             grabbable = true;
             grabbableToEnemies = true;
-            shovelHitForce = 0;
+            
+            sourcesDict = Utils.getAllAudioSources(gameObject, "SHSFX", sources);
+            timeSinceHit = hitCD;
+        }
 
-            sourcesDict = Utils.getAllAudioSources(this.gameObject, "SHSFX", sources);
-
-            shovelAudio = this.gameObject.GetComponent<AudioSource>();
-            reelUp = sourcesDict["reelSFX"].clip;
-            swing = sourcesDict["swingSFX"].clip;
-            hitSFX = new AudioClip[] { sourcesDict["hitSFX"].clip };
+        public override void ItemActivate(bool used, bool buttonDown = true)
+        {
+            if (playerHeldBy == null) return;
+            reelingUp = buttonDown;
+            if (!buttonDown || timeSinceHit < hitCD) return;
+            if (reelingUpCoroutine != null)
+                StopCoroutine(reelingUpCoroutine);
+            reelingUpCoroutine = StartCoroutine(reelUpSlapHand());
         }
 
         public override void Update()
         {
             base.Update();
-            if (Time.frameCount % 50 != 0)
-                return;
-            if(playerHeldBy != null && reelingUp && !isHoldingButton && !hittingPlayer)
+            if(startCounting)
             {
-                hittingPlayer = true;
-                hitPlayerServerRpc();
+                if (timeSinceHit >= hitCD)
+                    startCounting = false;
+                timeSinceHit += Time.deltaTime;
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void hitPlayerServerRpc()
+        private IEnumerator reelUpSlapHand()
         {
-            hitPlayerClientRpc();
+            var slapHand = this;
+            slapHand.playerHeldBy.activatingItem = true;
+            slapHand.playerHeldBy.twoHanded = true;
+            slapHand.playerHeldBy.playerBodyAnimator.ResetTrigger("shovelHit");
+            slapHand.playerHeldBy.playerBodyAnimator.SetBool("reelingUp", true);
+            slapHand.ReelUpSFXServerRpc();
+            yield return new WaitForSeconds(0.35f);
+            yield return new WaitUntil(() => slapHand.reelingUp == false);
+            slapHand.SwingSlapHandServerRpc(!slapHand.isHeld);
+            yield return new WaitForSeconds(0.13f);
+            yield return new WaitForEndOfFrame();
+            slapHand.HitSlapHandServerRpc(!slapHand.isHeld);
+            yield return new WaitForSeconds(0.3f);
+            slapHand.reelingUpCoroutine = null;
+            slapHand.playerHeldBy.activatingItem = false;
+            slapHand.playerHeldBy.twoHanded = false;
+            slapHand.timeSinceHit = 0;
+            slapHand.startCounting = true;
+        }
+
+
+        [ServerRpc(RequireOwnership = false)]
+        void ReelUpSFXServerRpc()
+        {
+            ReelUpSFXClientRpc();
         }
 
         [ClientRpc]
-        void hitPlayerClientRpc()
+        void ReelUpSFXClientRpc()
         {
-            int mask = LayerMask.GetMask(new string[] { "Player", "Enemies" });
+            sourcesDict["reelSFX"].Play();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void SwingSlapHandServerRpc(bool cancel = false)
+        {
+            SwingSlapHandClientRpc(cancel);
+        }
+
+        [ClientRpc]
+        void SwingSlapHandClientRpc(bool cancel = false)
+        {
+            playerHeldBy.playerBodyAnimator.SetBool("reelingUp", false);
+            if (cancel) return;
+            sourcesDict["swingSFX"].Play();
+            playerHeldBy.UpdateSpecialAnimationValue(true, (short)playerHeldBy.transform.localEulerAngles.y, 0.4f);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void HitSlapHandServerRpc(bool cancel = false)
+        {
+            HitSlapHandClientRpc(cancel);
+        }
+
+        [ClientRpc]
+        void HitSlapHandClientRpc(bool cancel = false)
+        {
+            if (cancel) return;
+            PlayHitSound();
+
             List<int> hitEntities = new List<int>();
             var camTransform = playerHeldBy.gameplayCamera.transform;
 
-            var hits = Physics.SphereCastAll(camTransform.position + camTransform.right * -0.35f, 0.8f, camTransform.forward, 1.5f, mask, QueryTriggerInteraction.Ignore);
+            var hits = Physics.SphereCastAll(camTransform.position + camTransform.right * -0.35f, slapHandHitRadius, camTransform.forward, slapHandHitDistance, slapHandMask, QueryTriggerInteraction.Collide);
             foreach (var collider in hits)
             {
+                var playerColliderGameObject = collider.collider.gameObject;
                 var player = collider.collider.GetComponent<PlayerControllerB>();
 
-                var playerColliderGameObject = collider.collider.gameObject;
                 var enemyColliderRoot = collider.collider.transform.root;
-
-                if (player != null 
-                    && playerHeldBy.playerClientId != GameNetworkManager.Instance.localPlayerController.playerClientId 
-                    && !hitEntities.Exists(i => i == playerColliderGameObject.GetInstanceID()))
-                {
-                    print("player hit !!");
-                    print(player.name);
-
-                    hitEntities.Add(playerColliderGameObject.GetInstanceID());
-                    StartCoroutine(knockback(player));
-                }
                 var enemy = enemyColliderRoot.GetComponent<EnemyAI>();
+
+                if (player != null
+                    && !hitEntities.Exists(i => i == playerColliderGameObject.GetInstanceID())
+                    && playerHeldBy.playerClientId != GameNetworkManager.Instance.localPlayerController.playerClientId
+                    && playerHeldBy.playerClientId != player.playerClientId)
+                {
+                    hitEntities.Add(playerColliderGameObject.GetInstanceID());
+                    player.DamagePlayer(0);
+                    knockback(playerColliderGameObject);
+                }
 
                 if (enemy != null && !hitEntities.Exists(i => i == enemyColliderRoot.gameObject.GetInstanceID()))
                 {
                     hitEntities.Add(enemyColliderRoot.gameObject.GetInstanceID());
-                    StartCoroutine(knockback(enemy));
+                    knockback(enemyColliderRoot.gameObject);
                 }
             }
-
-            hittingPlayer = false;
         }
 
-        public IEnumerator knockback(NetworkBehaviour entity)
+        void PlayHitSound()
         {
-            float time = 1.0f;
+            if(Physics.Raycast(playerHeldBy.gameplayCamera.transform.position, playerHeldBy.gameplayCamera.transform.forward, slapHandHitDistance + slapHandHitRadius - 0.1f, slapHandMask)) // StartOfRound.Instance.collidersRoomMaskDefaultAndPlayers
+            {
+                sourcesDict["hitSFX"].Play();
+            }
+        }
+
+        void knockback(GameObject entity)
+        {
             float currentTime = 0f;
             var initialPosition = entity.transform.position;
             var playerLookingDirection = playerHeldBy.gameplayCamera.transform.forward;
@@ -95,9 +163,9 @@ namespace MoreItems.Behaviours
                 playerLookingDirection.y = -playerLookingDirection.y;
             }
 
-            var direction = playerLookingDirection + Vector3.up * 0.25f;
+            var direction = playerLookingDirection + Vector3.up * 0.3f;
 
-            Ray ray = new Ray(initialPosition + Vector3.up * 0.5f, direction);
+            Ray ray = new Ray(initialPosition + Vector3.up * 0.1f, direction);
             float distance = 20f;
 
             while (Physics.Linecast(ray.GetPoint(0f), ray.GetPoint(distance), StartOfRound.Instance.collidersAndRoomMaskAndDefault))
@@ -105,15 +173,14 @@ namespace MoreItems.Behaviours
                 distance -= 1f;
             }
 
-            var finalPosition = ray.GetPoint(distance);
+            var finalDistance = distance > 0 ? distance - 0.5f : distance;
+            var finalPosition = ray.GetPoint(finalDistance);
 
             while (currentTime < time)
             {
                 entity.transform.position = Vector3.MoveTowards(entity.transform.position, finalPosition, currentTime);
                 currentTime += Time.deltaTime;
             }
-
-            yield return null;
         }
     }
 }
