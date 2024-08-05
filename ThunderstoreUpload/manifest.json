@@ -1,0 +1,12 @@
+{
+    "name": "MoreItems",
+    "author": "LeoLR",
+    "version_number": "7.0.0",
+    "website_url": "https://twitch.tv/arkait_",
+    "description": "Adds 3 shop items and 7 scraps",
+    "dependencies": [
+		"BepInEx-BepInExPack-5.4.2100",
+        "Evaisa-HookGenPatcher-0.0.5",
+		"Evaisa-LethalLib-0.16.1"
+    ]
+}
