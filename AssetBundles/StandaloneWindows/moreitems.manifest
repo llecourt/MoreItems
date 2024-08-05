@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 4065163108
+CRC: 1130300937
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a1b68b7af8d4bc81b53e05fb16006883
+    Hash: 061a9ea0bc978c6ac20c732093702c94
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 9fe7ecec51129c1621ac98d20278d864
+    Hash: b8aa4875321032c01fb1ff3924d03ce0
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: a1b68b7af8d4bc81b53e05fb16006883
+    Hash: 061a9ea0bc978c6ac20c732093702c94
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -62,6 +62,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: 8233d90336aea43098adf6dbabd606a2, type: 3}
 - Class: 115
   Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
 - Class: 198
   Script: {instanceID: 0}
 - Class: 199
@@ -94,13 +96,14 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
   ClassName: UnityEngine.Rendering.HighDefinition.IntScalableSettingValue
 Assets:
-- Assets/Warp/WarpItem.asset
 - Assets/FramedPic/FramedPicItem.asset
 - Assets/Dynamite/DynamiteItem.asset
+- Assets/Adrenaline/AdrenalineItem.asset
 - Assets/Phone/PhoneItem.asset
 - Assets/Minikit/MinikitItem.asset
 - Assets/Karma/KarmaItem.asset
 - Assets/SlapHand/SlapHandItem.asset
+- Assets/BananaPeel/BananaItem.asset
 - Assets/GravityCoil/GravityCoilItem.asset
 - Assets/Megaphone/MegaphoneItem.asset
 - Assets/Sypo/SypoItem.asset

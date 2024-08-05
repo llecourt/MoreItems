@@ -180,7 +180,7 @@ namespace MoreItems.Behaviours
             {
                 entity.transform.position = Vector3.MoveTowards(entity.transform.position, finalPosition, currentTime);
                 currentTime += Time.deltaTime;
-            }
+            } 
         }
     }
 }

@@ -18,7 +18,6 @@ namespace MoreItems.Behaviours
         float chargeTime = 0f;
         float energyLostPerShot = 0.5f;
         
-        int bulletDamage = 100;
         int interval = 10;
 
         bool charging = false;
@@ -35,6 +34,7 @@ namespace MoreItems.Behaviours
         Color dangerColor = new Color32(200, 20, 20, 255);
         Color unreadyColor = new Color32(250, 100, 0, 255);
 
+        GameObject laserLight;
         GameObject ScopeChargeTimer;
 
         void Awake()
@@ -44,7 +44,8 @@ namespace MoreItems.Behaviours
             sourcesDict = Utils.getAllAudioSources(this.gameObject, "KarmaSFX", sources);
             psDict = Utils.getAllParticleSystems(this.gameObject, "KarmaParticles", ps);
             ScopeChargeTimer = this.gameObject.transform.Find("ScopeChargeTimer").gameObject;
-            
+            laserLight = this.gameObject.transform.Find("laserLight").gameObject;
+
             this.insertedBattery.charge = 1f;
         }
 
@@ -52,19 +53,26 @@ namespace MoreItems.Behaviours
         {
             base.PocketItem();
             activated = false;
-            StopChargingRpc(false);
+            StopChargingServerRpc(false);
+            laserLight.GetComponent<Light>().enabled = false;
+        }
+
+        public override void EquipItem()
+        {
+            base.EquipItem();
+            laserLight.GetComponent<Light>().enabled = true;
         }
 
         public override void OnHitGround()
         {
             base.OnHitGround();
-            StopChargingRpc(false);
+            StopChargingServerRpc(false);
             activated = false;
             if (!coolingDown.Value && this.insertedBattery.charge > 0 && !broken.Value)
             {
                 if (UnityEngine.Random.Range(1, 20) == 1)
                 {
-                    ShootRpc();
+                    ShootServerRpc();
                 }
             }
         }
@@ -95,7 +103,7 @@ namespace MoreItems.Behaviours
         public override void ChargeBatteries()
         {
             base.ChargeBatteries();
-            RepairRpc();
+            RepairServerRpc();
         }
 
         public override void Update()
@@ -112,7 +120,7 @@ namespace MoreItems.Behaviours
                 timeSinceShot += Time.deltaTime * interval;
                 if (timeSinceShot > cooldown)
                 {
-                    ResetCooldownRpc();
+                    ResetCooldownServerRpc();
                 }
             }
             else if (wasOwnerLastFrame)
@@ -122,10 +130,10 @@ namespace MoreItems.Behaviours
 
                 if (activated)
                 {
-                    StartChargingRpc();
+                    StartChargingServerRpc();
                     if (chargeTime > maxChargeBeforeExplode)
                     {
-                        ExplodeRpc();
+                        ExplodeServerRpc();
                     }
                     chargeTime += Time.deltaTime * interval;
                 }
@@ -133,30 +141,18 @@ namespace MoreItems.Behaviours
                 {
                     if (chargeTime >= maxChargeBeforeShooting && chargeTime <= maxChargeBeforeExplode)
                     {
-                        StopChargingRpc(true);
+                        StopChargingServerRpc(true);
                         if(!shoot)
                         {
                             shoot = true;
-                            ShootRpc();
+                            ShootServerRpc();
                         }
                     }
                     else
                     {
-                        StopChargingRpc(false);
+                        StopChargingServerRpc(false);
                     }
                 }
-            }
-        }
-
-        void ShootRpc()
-        {
-            if (IsHost || IsServer)
-            {
-                ShootClientRpc();
-            }
-            else
-            {
-                ShootServerRpc();
             }
         }
 
@@ -175,7 +171,7 @@ namespace MoreItems.Behaviours
             psDict["Trail"].Play();
             this.insertedBattery.charge -= energyLostPerShot;
             sourcesDict["CooldownSFX"].PlayDelayed(0.35f);
-            changeCooldownValueRpc(true);
+            changeCooldownValueServerRpc(true);
             ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = unreadyColor;
 
             if(playerHeldBy != null && playerHeldBy.playerClientId == GameNetworkManager.Instance.localPlayerController.playerClientId)
@@ -190,36 +186,21 @@ namespace MoreItems.Behaviours
                 {
                     if (IsHost || IsServer)
                     {
-                        player.DamagePlayerFromOtherClientClientRpc(bulletDamage, psDict["Trail"].transform.forward, (int)player.playerClientId, player.health - bulletDamage);
+                        player.DamagePlayerFromOtherClientClientRpc(100, psDict["Trail"].transform.forward, (int)player.playerClientId, player.health - 100);
                     }
                     else
                     {
-                        player.DamagePlayerFromOtherClientServerRpc(bulletDamage, psDict["Trail"].transform.forward, (int)player.playerClientId);
+                        player.DamagePlayerFromOtherClientServerRpc(100, psDict["Trail"].transform.forward, (int)player.playerClientId);
                     }
                 }
 
-                var enemy = hit.collider.GetComponent<EnemyAICollisionDetect>();
+                var enemy = hit.collider.transform.root.GetComponent<EnemyAI>();
                 if(enemy != null)
                 {
-                    if (!enemy.mainScript.isEnemyDead)
-                    {
-                        enemy.mainScript.HitEnemy(bulletDamage, playerHeldBy);
-                    }
+                    enemy.HitEnemy(100, playerHeldBy, true);
                 }
             }
             shoot = false;
-        }
-
-        void StartChargingRpc()
-        {
-            if (IsHost || IsServer)
-            {
-                StartChargingClientRpc();
-            }
-            else
-            {
-                StartChargingServerRpc();
-            }
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -239,18 +220,6 @@ namespace MoreItems.Behaviours
             if (chargeTime > maxChargeBeforeShooting)
             {
                 ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = shootColor;
-            }
-        }
-
-        void StopChargingRpc(bool hasShot)
-        {
-            if (IsHost || IsServer)
-            {
-                StopChargingClientRpc(hasShot);
-            }
-            else
-            {
-                StopChargingServerRpc(hasShot);
             }
         }
 
@@ -275,18 +244,6 @@ namespace MoreItems.Behaviours
             }
         }
 
-        void ResetCooldownRpc()
-        {
-            if(IsHost || IsServer)
-            {
-                ResetCooldownClientRpc();
-            }
-            else
-            {
-                ResetCooldownServerRpc();
-            }
-        }
-
         [ServerRpc(RequireOwnership = false)]
         void ResetCooldownServerRpc()
         {
@@ -297,21 +254,9 @@ namespace MoreItems.Behaviours
         void ResetCooldownClientRpc()
         {
             timeSinceShot = 0f;
-            changeCooldownValueRpc(false);
+            changeCooldownValueServerRpc(false);
             sourcesDict["CoolupSFX"].Play();
             ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = readyColor;
-        }
-
-        void ExplodeRpc()
-        {
-            if (IsHost || IsServer)
-            {
-                ExplodeClientRpc();
-            }
-            else
-            {
-                ExplodeServerRpc();
-            }
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -324,8 +269,8 @@ namespace MoreItems.Behaviours
         void ExplodeClientRpc()
         {
             activated = false;
-            changeBrokenValueRpc(true);
-            StopChargingRpc(false);
+            changeBrokenValueServerRpc(true);
+            StopChargingServerRpc(false);
             sourcesDict["ExplosionSFX"].Play();
             this.insertedBattery.charge = 0f;
             ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = dangerColor;
@@ -334,18 +279,6 @@ namespace MoreItems.Behaviours
             psDict["MainBlast"].Play();
 
             Utils.Explode(this.gameObject, 5f, 50, 180);
-        }
-
-        void RepairRpc()
-        {
-            if (IsHost || IsServer)
-            {
-                RepairClientRpc();
-            }
-            else
-            {
-                RepairServerRpc();
-            }
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -357,7 +290,7 @@ namespace MoreItems.Behaviours
         [ClientRpc]
         void RepairClientRpc()
         {
-            changeBrokenValueRpc(false);
+            changeBrokenValueServerRpc(false);
             if (coolingDown.Value)
             {
                 ScopeChargeTimer.GetComponent<MeshRenderer>().material.color = unreadyColor;
@@ -368,34 +301,10 @@ namespace MoreItems.Behaviours
             }
         }
 
-        void changeCooldownValueRpc(bool value)
-        {
-            if(IsHost || IsServer)
-            {
-                coolingDown.Value = value;
-            }
-            else
-            {
-                changeCooldownValueServerRpc(value);
-            }
-        }
-
         [ServerRpc(RequireOwnership = false)]
         void changeCooldownValueServerRpc(bool value)
         {
             coolingDown.Value = value;
-        }
-
-        void changeBrokenValueRpc(bool value)
-        {
-            if (IsHost || IsServer)
-            {
-                broken.Value = value;
-            }
-            else
-            {
-                changeBrokenValueServerRpc(value);
-            }
         }
 
         [ServerRpc(RequireOwnership = false)]
