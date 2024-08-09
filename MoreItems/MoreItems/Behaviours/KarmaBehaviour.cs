@@ -114,7 +114,7 @@ namespace MoreItems.Behaviours
             
             if (coolingDown.Value)
             {
-                if (Time.frameCount % interval != 0)
+                if (Utils.frameCount(interval))
                     return;
 
                 timeSinceShot += Time.deltaTime * interval;
@@ -125,7 +125,7 @@ namespace MoreItems.Behaviours
             }
             else if (wasOwnerLastFrame)
             {
-                if (Time.frameCount % interval != 0)
+                if (Utils.frameCount(interval))
                     return;
 
                 if (activated)

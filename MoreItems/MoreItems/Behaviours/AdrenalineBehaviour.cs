@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace MoreItems.Behaviours
@@ -29,14 +30,7 @@ namespace MoreItems.Behaviours
             base.ItemActivate(used, buttonDown);
             if (playerHeldBy != null)
             {
-                sourcesDict["useSFX"].Play();
-                playerActiveOn = playerHeldBy;
-                playerActiveOn.movementSpeed *= runSpeedMultiplier;
-                playerActiveOn.health = 100;
-                DestroyObjectInHand(playerActiveOn);
-                triggered = true;
-                Utils.destroyObj(gameObject, "SyringeBody");
-                StartCoroutine(StartTimer());
+                activateSyringeServerRpc();
             }
         }
 
@@ -52,10 +46,49 @@ namespace MoreItems.Behaviours
         public override void Update()
         {
             base.Update();
-            if (triggered)
-            { 
+            if (triggered && playerActiveOn != null)
+            {
                 playerActiveOn.sprintMeter = 1;
             }
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            if(playerActiveOn != null)
+            {
+                playerActiveOn.movementSpeed = 4.6f;
+            }
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            base.OnNetworkDespawn();
+            if (playerActiveOn != null)
+            {
+                playerActiveOn.movementSpeed = 4.6f;
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void activateSyringeServerRpc()
+        {
+            activateSyringeClientRpc();
+        }
+
+        [ClientRpc]
+        void activateSyringeClientRpc()
+        {
+            sourcesDict["useSFX"].Play();
+            playerActiveOn = playerHeldBy;
+            playerActiveOn.movementSpeed *= runSpeedMultiplier;
+            playerActiveOn.health = 100;
+            DestroyObjectInHand(playerActiveOn);
+            grabbable = false;
+            grabbableToEnemies = false;
+            triggered = true;
+            Utils.destroyObj(gameObject, "SyringeBody");
+            StartCoroutine(StartTimer());
         }
     }
 }

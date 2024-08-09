@@ -17,7 +17,7 @@ MonoBehaviour:
   spawnPositionTypes: []
   twoHanded: 0
   twoHandedAnimation: 0
-  canBeGrabbedBeforeGameStart: 0
+  canBeGrabbedBeforeGameStart: 1
   weight: 1.05
   itemIsTrigger: 0
   holdButtonUse: 0
@@ -27,8 +27,8 @@ MonoBehaviour:
   creditsWorth: 60
   lockedInDemo: 0
   highestSalePercentage: 0
-  maxValue: 90
-  minValue: 30
+  maxValue: 100
+  minValue: 50
   spawnPrefab: {fileID: 8857917805674687144, guid: 7364f30d57cf47d4aa1f851ed6b95112,
     type: 3}
   requiresBattery: 0

@@ -26,14 +26,14 @@ namespace MoreItems.Behaviours
         public override void Update()
         {
             base.Update();
-            if (!active || playerHeldBy == null || !wasOwnerLastFrame || Time.frameCount % 10 != 0)
+            if (!active || playerHeldBy == null || !wasOwnerLastFrame || Utils.frameCount(10))
                 return;
 
             if (playerHeldBy.playerActions.FindAction("Jump").IsPressed() && playerHeldBy.thisController.isGrounded && !playerHeldBy.inSpecialInteractAnimation 
                 && !playerHeldBy.inAnimationWithEnemy && !playerHeldBy.isClimbingLadder && !playerHeldBy.isPlayerDead && !playerHeldBy.inTerminalMenu 
                 && !playerHeldBy.isTypingChat && !playerHeldBy.isCrouching)
             {
-                PlayJumpSFXRpc();
+                PlayJumpSFXServerRpc();
             }
         }
 
@@ -113,18 +113,6 @@ namespace MoreItems.Behaviours
             if (player == null)
                 return;
             player.jumpForce = baseJumpForce;
-        }
-
-        void PlayJumpSFXRpc()
-        {
-            if(IsHost || IsServer)
-            {
-                PlayJumpSFXClientRpc();
-            }
-            else
-            {
-                PlayJumpSFXServerRpc();
-            }
         }
 
         [ServerRpc(RequireOwnership = false)]

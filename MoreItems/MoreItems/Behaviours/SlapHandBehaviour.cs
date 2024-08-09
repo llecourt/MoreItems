@@ -113,7 +113,7 @@ namespace MoreItems.Behaviours
         void HitSlapHandClientRpc(bool cancel = false)
         {
             if (cancel) return;
-            PlayHitSound();
+            sourcesDict["hitSFX"].Play();
 
             List<int> hitEntities = new List<int>();
             var camTransform = playerHeldBy.gameplayCamera.transform;
@@ -145,14 +145,6 @@ namespace MoreItems.Behaviours
             }
         }
 
-        void PlayHitSound()
-        {
-            if(Physics.Raycast(playerHeldBy.gameplayCamera.transform.position, playerHeldBy.gameplayCamera.transform.forward, slapHandHitDistance + slapHandHitRadius - 0.1f, slapHandMask)) // StartOfRound.Instance.collidersRoomMaskDefaultAndPlayers
-            {
-                sourcesDict["hitSFX"].Play();
-            }
-        }
-
         void knockback(GameObject entity)
         {
             float currentTime = 0f;
@@ -180,7 +172,7 @@ namespace MoreItems.Behaviours
             {
                 entity.transform.position = Vector3.MoveTowards(entity.transform.position, finalPosition, currentTime);
                 currentTime += Time.deltaTime;
-            } 
+            }
         }
     }
 }

@@ -975,6 +975,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1421282839987686988, guid: 7364f30d57cf47d4aa1f851ed6b95112,
+        type: 3}
+      propertyPath: MaxDistance
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 3189101274135983848, guid: 7364f30d57cf47d4aa1f851ed6b95112,
         type: 3}
       propertyPath: GlobalObjectIdHash

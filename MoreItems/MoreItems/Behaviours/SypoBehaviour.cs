@@ -54,7 +54,7 @@ namespace MoreItems.Behaviours
         public override void Update()
         {
             base.Update();
-            if (Time.frameCount % 10 != 0 || !init)
+            if (Utils.frameCount(10) || !init)
                 return;
             this.gameObject.transform.localScale = scale;
         }

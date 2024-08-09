@@ -26,7 +26,7 @@ namespace MoreItems.Behaviours
         public override void Update()
         {
             base.Update();
-            if (Time.frameCount % 20 != 0)
+            if (Utils.frameCount(20))
                 return;
             if (!playerHeldBy)
             {

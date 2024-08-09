@@ -10,8 +10,8 @@ namespace MoreItems.Behaviours
     internal class FramedPicBehaviour : GrabbableObject
     {
         string[] possiblePhotos = new string[] { "Pigeon", "ManMug", "Prospector", "Boowomp", "Gambling", "Toto" };
-        NetworkVariable<int> index = new NetworkVariable<int>(0);
-        NetworkVariable<bool> indexSet = new NetworkVariable<bool>(false);
+        NetworkVariable<int> index = new NetworkVariable<int>(-1);
+        bool materialSet = false;
         MeshRenderer picture;
         Transform listOfPossiblePhotos;
 
@@ -22,24 +22,26 @@ namespace MoreItems.Behaviours
 
             picture = transform.Find("Photo").GetComponent<MeshRenderer>();
             listOfPossiblePhotos = transform.Find("PossiblePhotoMaterials");
-
-            if (GameNetworkManager.Instance.localPlayerController.IsHost || GameNetworkManager.Instance.localPlayerController.IsServer)
-            {
-                SetIndex();
-            }
-            StartCoroutine(SetTexture());
         }
 
-        void SetIndex()
+        public void FixedUpdate()
+        {
+            if (Utils.frameCount(10)) return;
+            if (index.Value == -1 && Utils.isLocalPlayerHosting())
+            {
+                SetIndexServerRpc();
+            }
+            else if(!materialSet)
+            {
+                materialSet = true;
+                picture.material = listOfPossiblePhotos.Find(possiblePhotos[index.Value]).GetComponent<MeshRenderer>().material;
+            }
+        }
+
+        [ServerRpc(RequireOwnership = true)]
+        void SetIndexServerRpc()
         {
             index.Value = UnityEngine.Random.Range(0, possiblePhotos.Length - 1);
-            indexSet.Value = true;
-        }
-
-        IEnumerator SetTexture()
-        {
-            yield return new WaitUntil(() => indexSet.Value == true);
-            picture.material = listOfPossiblePhotos.Find(possiblePhotos[index.Value]).GetComponent<MeshRenderer>().material;
         }
     }
 }

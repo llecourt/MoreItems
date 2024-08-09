@@ -84,7 +84,7 @@ namespace MoreItems.Behaviours
         public override void PocketItem()
         {
             base.PocketItem();
-            editMeshAnimRpc(false);
+            editMeshAnimServerRpc(false);
         }
 
         public override void EquipItem()
@@ -92,14 +92,14 @@ namespace MoreItems.Behaviours
             base.EquipItem();
             if(active)
             {
-                editMeshAnimRpc(true);
+                editMeshAnimServerRpc(true);
             }
         }
 
         public override void Update()
         {
             base.Update();
-            if (Time.frameCount % interval != 0)
+            if (Utils.frameCount(interval))
                 return;
 
             if (active)
@@ -151,18 +151,6 @@ namespace MoreItems.Behaviours
 
             Utils.destroyObj(this.gameObject, "Base");
             Destroy(this.gameObject, ExplosionSFX.clip.length);
-        }
-
-        void editMeshAnimRpc(bool active)
-        {
-            if(IsServer || IsHost)
-            {
-                editMeshAnimClientRpc(active);
-            }
-            else
-            {
-                editMeshAnimServerRpc(active);
-            }
         }
 
         [ServerRpc(RequireOwnership = false)]

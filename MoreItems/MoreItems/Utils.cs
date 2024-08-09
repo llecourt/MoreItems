@@ -107,5 +107,15 @@ namespace MoreItems
 
             hitEntities.Clear();
         }
+
+        public static bool frameCount(int interval)
+        {
+            return Time.frameCount % interval != 0;
+        }
+
+        public static bool isLocalPlayerHosting()
+        {
+            return GameNetworkManager.Instance.localPlayerController.IsHost || GameNetworkManager.Instance.localPlayerController.IsServer;
+        }
     }
 }

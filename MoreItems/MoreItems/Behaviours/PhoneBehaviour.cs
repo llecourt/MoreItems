@@ -15,9 +15,12 @@ namespace MoreItems.Behaviours
         Dictionary<string, AudioSource> sourcesDict = new Dictionary<string, AudioSource>();
 
         Animator flashAnimator;
-        float playInterval = 30f;
-        float time = 0f;
-        int interval = 10;
+        NetworkVariable<float> playInterval = new NetworkVariable<float>(30f);
+        NetworkVariable<float> time = new NetworkVariable<float>(0f);
+        NetworkVariable<int> index = new NetworkVariable<int>(1);
+
+        bool playing = false;
+        int interval = 20;
 
         void Awake()
         {
@@ -34,7 +37,7 @@ namespace MoreItems.Behaviours
             base.ItemActivate(used, buttonDown);
             if(this.insertedBattery.charge > 0)
             {
-                flashRpc();
+                flashServerRpc();
                 this.insertedBattery.charge -= 0.1f;
             }
         }
@@ -42,26 +45,15 @@ namespace MoreItems.Behaviours
         public override void Update()
         {
             base.Update();
-            if (Time.frameCount % interval != 0)
+            if (Utils.frameCount(interval))
                 return;
-            time += Time.deltaTime * interval;
-            if(time >= playInterval)
-            {
-                time = 0f;
-                playInterval = UnityEngine.Random.Range(30f, 120f);
-                playRandomSoundRpc();
-            }
-        }
 
-        void playRandomSoundRpc()
-        {
-            if (IsHost || IsServer)
+            addToTimeServerRpc(Time.deltaTime * interval);
+            if (time.Value >= playInterval.Value && !playing)
             {
-                playRandomSoundClientRpc();
-            }
-            else
-            {
+                playing = true;
                 playRandomSoundServerRpc();
+                setNewNetworkValuesServerRpc();
             }
         }
 
@@ -74,20 +66,7 @@ namespace MoreItems.Behaviours
         [ClientRpc]
         void playRandomSoundClientRpc()
         {
-            var index = UnityEngine.Random.Range(1, sources.Length - 1);
-            sourcesDict[sources[index]].Play();
-        }
-
-        void flashRpc()
-        {
-            if (IsHost || IsServer)
-            {
-                flashClientRpc();
-            }
-            else
-            {
-                flashServerRpc();
-            }
+            sourcesDict[sources[index.Value]].Play();
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -147,6 +126,21 @@ namespace MoreItems.Behaviours
             float dot = Vector3.Dot(playerHeld.normalized, entityHit.normalized);
             double flashStr = Math.Max(0, -0.1 + 2 * -dot);
             return Convert.ToSingle(flashStr);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void setNewNetworkValuesServerRpc()
+        {
+            playInterval.Value = UnityEngine.Random.Range(30f, 60f);
+            index.Value = UnityEngine.Random.Range(1, sources.Length - 1);
+            time.Value = 0f;
+            playing = false;
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void addToTimeServerRpc(float value)
+        {
+            time.Value += value;
         }
     }
 }
