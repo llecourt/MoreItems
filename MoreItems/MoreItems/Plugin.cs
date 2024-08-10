@@ -108,18 +108,6 @@ namespace MoreItems
             NetworkPrefabs.RegisterNetworkPrefab(banana.spawnPrefab);
             Items.RegisterScrap(banana, 15, Levels.LevelTypes.All);
 
-            var camScreen = bundle.LoadAsset<Item>("Assets/Camera/CamScreenItem.asset");
-            camScreen.spawnPrefab.AddComponent<CameraScreenBehaviour>().itemProperties = camScreen;
-            Utilities.FixMixerGroups(camScreen.spawnPrefab);
-            NetworkPrefabs.RegisterNetworkPrefab(camScreen.spawnPrefab);
-            // Items.RegisterShopItem(camScreen, 0);
-
-            var camObject = bundle.LoadAsset<Item>("Assets/Camera/CameraItem.asset");
-            camObject.spawnPrefab.AddComponent<CameraObjectBehaviour>().itemProperties = camObject;
-            Utilities.FixMixerGroups(camObject.spawnPrefab);
-            NetworkPrefabs.RegisterNetworkPrefab(camObject.spawnPrefab);
-            // Items.RegisterShopItem(camObject, 0);
-
             harmony.PatchAll();
         }
     }

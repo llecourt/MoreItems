@@ -1,22 +1,20 @@
 ManifestFileVersion: 0
-CRC: 3960585367
+CRC: 3968192136
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 6b589f7b954431c8150692fcbcb2685e
+    Hash: c7fc7ccee470cfa05a05e0e39b37e4dc
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 745d74873a7bc1d7627d0e35f01ee3a4
+    Hash: b8aa4875321032c01fb1ff3924d03ce0
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 6b589f7b954431c8150692fcbcb2685e
+    Hash: c7fc7ccee470cfa05a05e0e39b37e4dc
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
 - Class: 4
-  Script: {instanceID: 0}
-- Class: 20
   Script: {instanceID: 0}
 - Class: 21
   Script: {instanceID: 0}
@@ -40,16 +38,12 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 83
   Script: {instanceID: 0}
-- Class: 84
-  Script: {instanceID: 0}
 - Class: 91
   Script: {instanceID: 0}
 - Class: 95
   Script: {instanceID: 0}
 - Class: 108
   Script: {instanceID: 0}
-- Class: 114
-  Script: {fileID: 11500000, guid: 23c1ce4fb46143f46bc5cb5224c934f6, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: bb977b126bc1b4f15813dcf9da9bb600, type: 3}
 - Class: 114
@@ -92,29 +86,15 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: Unity.ProBuilder
   ClassName: UnityEngine.ProBuilder.Face
 - AssemblyName: Unity.ProBuilder
-  ClassName: UnityEngine.ProBuilder.Shapes.Cube
-- AssemblyName: Unity.ProBuilder
   ClassName: UnityEngine.ProBuilder.Shapes.Cylinder
 - AssemblyName: Unity.ProBuilder
   ClassName: UnityEngine.ProBuilder.SharedVertex
 - AssemblyName: Unity.ProBuilder
   ClassName: UnityEngine.ProBuilder.UnwrapParameters
-- AssemblyName: Unity.RenderPipelines.Core.Runtime
-  ClassName: UnityEngine.Rendering.BitArray128
 - AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
   ClassName: UnityEngine.Rendering.HighDefinition.BoolScalableSettingValue
 - AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
-  ClassName: UnityEngine.Rendering.HighDefinition.FrameSettings
-- AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
-  ClassName: UnityEngine.Rendering.HighDefinition.FrameSettingsOverrideMask
-- AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
-  ClassName: UnityEngine.Rendering.HighDefinition.HDPhysicalCamera
-- AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
   ClassName: UnityEngine.Rendering.HighDefinition.IntScalableSettingValue
-- AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
-  ClassName: UnityEngine.Rendering.HighDefinition.ObsoleteFrameSettings
-- AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
-  ClassName: UnityEngine.Rendering.HighDefinition.ObsoleteLightLoopSettings
 Assets:
 - Assets/FramedPic/FramedPicItem.asset
 - Assets/Dynamite/DynamiteItem.asset
@@ -122,11 +102,8 @@ Assets:
 - Assets/Phone/PhoneItem.asset
 - Assets/Minikit/MinikitItem.asset
 - Assets/Karma/KarmaItem.asset
-- Assets/Camera/CameraItem.asset
-- Assets/Camera/CamScreenItem.asset
 - Assets/SlapHand/SlapHandItem.asset
 - Assets/BananaPeel/BananaItem.asset
 - Assets/GravityCoil/GravityCoilItem.asset
-- Assets/Megaphone/MegaphoneItem.asset
 - Assets/Sypo/SypoItem.asset
 Dependencies: []
