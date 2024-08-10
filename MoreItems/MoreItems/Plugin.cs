@@ -14,10 +14,11 @@ namespace MoreItems
     {
         const string guid = "LeoLR.MoreItems";
         const string name = "MoreItems";
-        const string version = "7.1.0";
+        const string version = "7.2.0";
 
         Harmony harmony = new Harmony("LeoLR.MoreItems");
         public static Plugin instance;
+        public AssetBundle bundle;
 
         void Awake()
         {
@@ -37,7 +38,7 @@ namespace MoreItems
             instance = this;
 
             string assetDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "moreitems");
-            AssetBundle bundle = AssetBundle.LoadFromFile(assetDir);
+            bundle = AssetBundle.LoadFromFile(assetDir);
 
             var dynamite = bundle.LoadAsset<Item>("Assets/Dynamite/DynamiteItem.asset");
             dynamite.spawnPrefab.AddComponent<DynamiteBehaviour>().itemProperties = dynamite;
@@ -106,6 +107,18 @@ namespace MoreItems
             Utilities.FixMixerGroups(banana.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(banana.spawnPrefab);
             Items.RegisterScrap(banana, 15, Levels.LevelTypes.All);
+
+            var camScreen = bundle.LoadAsset<Item>("Assets/Camera/CamScreenItem.asset");
+            camScreen.spawnPrefab.AddComponent<CameraScreenBehaviour>().itemProperties = camScreen;
+            Utilities.FixMixerGroups(camScreen.spawnPrefab);
+            NetworkPrefabs.RegisterNetworkPrefab(camScreen.spawnPrefab);
+            Items.RegisterShopItem(camScreen, 0);
+
+            var camObject = bundle.LoadAsset<Item>("Assets/Camera/CameraItem.asset");
+            camObject.spawnPrefab.AddComponent<CameraObjectBehaviour>().itemProperties = camObject;
+            Utilities.FixMixerGroups(camObject.spawnPrefab);
+            NetworkPrefabs.RegisterNetworkPrefab(camObject.spawnPrefab);
+            // Items.RegisterShopItem(camObject, 0);
 
             harmony.PatchAll();
         }

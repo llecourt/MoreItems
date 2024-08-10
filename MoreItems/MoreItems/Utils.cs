@@ -46,7 +46,7 @@ namespace MoreItems
             }
             catch
             {
-                MonoBehaviour.print("Cannot destroy " + obj);
+                Debug.LogError("Cannot destroy " + obj);
             }
         }
 

@@ -20,7 +20,7 @@ namespace MoreItems.Behaviours
         NetworkVariable<int> index = new NetworkVariable<int>(1);
 
         bool playing = false;
-        int interval = 20;
+        int interval = 50;
 
         void Awake()
         {
@@ -42,13 +42,12 @@ namespace MoreItems.Behaviours
             }
         }
 
-        public override void Update()
+        public void FixedUpdate()
         {
-            base.Update();
             if (Utils.frameCount(interval))
                 return;
 
-            addToTimeServerRpc(Time.deltaTime * interval);
+            addToTimeServerRpc(Time.fixedDeltaTime * interval);
             if (time.Value >= playInterval.Value && !playing)
             {
                 playing = true;

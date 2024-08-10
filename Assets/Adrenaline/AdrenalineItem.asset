@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: AdrenalineItem
   m_EditorClassIdentifier: 
   itemId: 0
-  itemName: Adrenaline Syringe
+  itemName: Adrenaline syringe
   spawnPositionTypes: []
   twoHanded: 0
   twoHandedAnimation: 0
-  canBeGrabbedBeforeGameStart: 0
+  canBeGrabbedBeforeGameStart: 1
   weight: 1.01
   itemIsTrigger: 0
   holdButtonUse: 0

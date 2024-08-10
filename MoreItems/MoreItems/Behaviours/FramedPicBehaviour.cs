@@ -11,7 +11,6 @@ namespace MoreItems.Behaviours
     {
         string[] possiblePhotos = new string[] { "Pigeon", "ManMug", "Prospector", "Boowomp", "Gambling", "Toto" };
         NetworkVariable<int> index = new NetworkVariable<int>(-1);
-        bool materialSet = false;
         MeshRenderer picture;
         Transform listOfPossiblePhotos;
 
@@ -26,15 +25,19 @@ namespace MoreItems.Behaviours
 
         public void FixedUpdate()
         {
-            if (Utils.frameCount(10)) return;
+            if (Utils.frameCount(100)) return;
             if (index.Value == -1 && Utils.isLocalPlayerHosting())
             {
                 SetIndexServerRpc();
             }
-            else if(!materialSet)
+            else
             {
-                materialSet = true;
-                picture.material = listOfPossiblePhotos.Find(possiblePhotos[index.Value]).GetComponent<MeshRenderer>().material;
+                try
+                {
+                    picture.material = listOfPossiblePhotos.Find(possiblePhotos[index.Value]).GetComponent<MeshRenderer>().material;
+                } catch {
+                    Debug.LogError("Cannot set picture material");
+                }
             }
         }
 

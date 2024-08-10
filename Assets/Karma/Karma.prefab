@@ -16445,17 +16445,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 12fabc4b1d4eae44496f3867b621a35e,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.41596276
+      value: 0.8148395
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 12fabc4b1d4eae44496f3867b621a35e,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -5.6160116
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 12fabc4b1d4eae44496f3867b621a35e,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.7151625
+      value: 4.17652
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 12fabc4b1d4eae44496f3867b621a35e,
         type: 3}
@@ -16644,7 +16644,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

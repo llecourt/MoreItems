@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BananaItem
   m_EditorClassIdentifier: 
   itemId: 0
-  itemName: Banana Peel
+  itemName: Banana peel
   spawnPositionTypes: []
   twoHanded: 0
   twoHandedAnimation: 0
