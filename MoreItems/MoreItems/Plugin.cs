@@ -112,7 +112,7 @@ namespace MoreItems
             camScreen.spawnPrefab.AddComponent<CameraScreenBehaviour>().itemProperties = camScreen;
             Utilities.FixMixerGroups(camScreen.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(camScreen.spawnPrefab);
-            Items.RegisterShopItem(camScreen, 0);
+            // Items.RegisterShopItem(camScreen, 0);
 
             var camObject = bundle.LoadAsset<Item>("Assets/Camera/CameraItem.asset");
             camObject.spawnPrefab.AddComponent<CameraObjectBehaviour>().itemProperties = camObject;
