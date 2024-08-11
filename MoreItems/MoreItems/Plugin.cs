@@ -14,7 +14,7 @@ namespace MoreItems
     {
         const string guid = "LeoLR.MoreItems";
         const string name = "MoreItems";
-        const string version = "7.2.0";
+        const string version = "8.0.0";
 
         Harmony harmony = new Harmony("LeoLR.MoreItems");
         public static Plugin instance;
@@ -107,6 +107,12 @@ namespace MoreItems
             Utilities.FixMixerGroups(banana.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(banana.spawnPrefab);
             Items.RegisterScrap(banana, 15, Levels.LevelTypes.All);
+
+            var bottle = bundle.LoadAsset<Item>("Assets/Bottle/BottleItem.asset");
+            bottle.spawnPrefab.AddComponent<BottleBehaviour>().itemProperties = bottle;
+            Utilities.FixMixerGroups(bottle.spawnPrefab);
+            NetworkPrefabs.RegisterNetworkPrefab(bottle.spawnPrefab);
+            Items.RegisterScrap(bottle, 15, Levels.LevelTypes.All);
 
             harmony.PatchAll();
         }

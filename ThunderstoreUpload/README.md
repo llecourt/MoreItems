@@ -14,3 +14,4 @@ Used https://github.com/EvaisaDev/UnityNetcodePatcher
 - Phone
 - Slap hand
 - Banana peel
+- Bottle

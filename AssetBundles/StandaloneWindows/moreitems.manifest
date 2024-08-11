@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 3968192136
+CRC: 2177035061
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c7fc7ccee470cfa05a05e0e39b37e4dc
+    Hash: 6597ebde0b02359cd5c3e911dd0cb4e1
   TypeTreeHash:
     serializedVersion: 2
     Hash: b8aa4875321032c01fb1ff3924d03ce0
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: c7fc7ccee470cfa05a05e0e39b37e4dc
+    Hash: 6597ebde0b02359cd5c3e911dd0cb4e1
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -104,6 +104,7 @@ Assets:
 - Assets/Karma/KarmaItem.asset
 - Assets/SlapHand/SlapHandItem.asset
 - Assets/BananaPeel/BananaItem.asset
+- Assets/Bottle/BottleItem.asset
 - Assets/GravityCoil/GravityCoilItem.asset
 - Assets/Sypo/SypoItem.asset
 Dependencies: []

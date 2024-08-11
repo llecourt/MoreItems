@@ -26,7 +26,7 @@ MonoBehaviour:
   isScrap: 0
   creditsWorth: 0
   lockedInDemo: 0
-  highestSalePercentage: 0
+  highestSalePercentage: 80
   maxValue: 0
   minValue: 0
   spawnPrefab: {fileID: 384307146600897556, guid: e29911e3a14c975449752d620f77bbc2,
