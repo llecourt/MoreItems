@@ -10,10 +10,8 @@ namespace MoreItems.Behaviours
         public Ray grenadeThrowRay;
         public RaycastHit grenadeHit;
 
-        float minExplosionTime = 2f;
-        float maxExplosionTime = 10f;
         float explodeTimer = 0f;
-        float timeToExplode = 999f;
+        float timeToExplode = 5f;
         int interval = 10;
 
         private AudioSource MeshBurnSFX;
@@ -64,7 +62,6 @@ namespace MoreItems.Behaviours
                 if (!active)
                 {
                     active = true;
-                    timeToExplode = UnityEngine.Random.Range(maxExplosionTime, minExplosionTime);
                     if (IsHost || IsServer)
                     {
                         startDynamiteBurnClientRpc();

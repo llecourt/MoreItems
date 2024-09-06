@@ -9,7 +9,7 @@ namespace MoreItems.Behaviours
 {
     internal class FramedPicBehaviour : GrabbableObject
     {
-        string[] possiblePhotos = new string[] { "Pigeon", "ManMug", "Prospector", "Boowomp", "Gambling", "Toto" };
+        string[] possiblePhotos = new string[] { "Pigeon", "Toto", "Prospector", "Boowomp", "Gambling", "ManMug" };
         NetworkVariable<int> index = new NetworkVariable<int>(-1);
         MeshRenderer picture;
         Transform listOfPossiblePhotos;

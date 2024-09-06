@@ -130,7 +130,7 @@ namespace MoreItems.Behaviours
         [ServerRpc(RequireOwnership = false)]
         void setNewNetworkValuesServerRpc()
         {
-            playInterval.Value = UnityEngine.Random.Range(30f, 60f);
+            playInterval.Value = UnityEngine.Random.Range(60f, 180f);
             index.Value = UnityEngine.Random.Range(1, sources.Length - 1);
             time.Value = 0f;
             playing = false;
