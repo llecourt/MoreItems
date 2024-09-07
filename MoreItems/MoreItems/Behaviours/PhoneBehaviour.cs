@@ -116,18 +116,18 @@ namespace MoreItems.Behaviours
                     if(!Physics.Linecast(playerHeldBy.transform.position + Vector3.up * 0.5f, enemy.transform.position + Vector3.up * 0.5f, StartOfRound.Instance.collidersAndRoomMaskAndDefault, QueryTriggerInteraction.Ignore))
                     {
                         float flashStr = determineFlashStrength(playerHeldBy.transform.forward, enemy.transform.forward);
-                        StartCoroutine(flashCoroutine(enemy, flashStr));
+                        StartCoroutine(flashCoroutine(enemy, flashStr, playerHeldBy));
                     }
                 }
             }
         }
 
-        IEnumerator flashCoroutine(EnemyAI enemy, float flashStr)
+        IEnumerator flashCoroutine(EnemyAI enemy, float flashStr, PlayerControllerB playerHolding)
         {
-            enemy.SetEnemyStunned(true, flashStr, playerHeldBy);
+            enemy.SetEnemyStunned(true, flashStr, playerHolding);
             yield return new WaitForSeconds(flashStr);
             yield return new WaitForEndOfFrame();
-            enemy.SetMovingTowardsTargetPlayer(playerHeldBy);
+            enemy.SetMovingTowardsTargetPlayer(playerHolding);
             yield return new WaitForEndOfFrame();
         }
 
