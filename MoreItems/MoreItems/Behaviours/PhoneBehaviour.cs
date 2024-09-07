@@ -6,6 +6,8 @@ using System.Text;
 using UnityEngine;
 using Unity.Netcode;
 using GameNetcodeStuff;
+using System.Collections;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace MoreItems.Behaviours
 {
@@ -114,10 +116,19 @@ namespace MoreItems.Behaviours
                     if(!Physics.Linecast(playerHeldBy.transform.position + Vector3.up * 0.5f, enemy.transform.position + Vector3.up * 0.5f, StartOfRound.Instance.collidersAndRoomMaskAndDefault, QueryTriggerInteraction.Ignore))
                     {
                         float flashStr = determineFlashStrength(playerHeldBy.transform.forward, enemy.transform.forward);
-                        enemy.SetEnemyStunned(true, flashStr, playerHeldBy);
+                        StartCoroutine(flashCoroutine(enemy, flashStr));
                     }
                 }
             }
+        }
+
+        IEnumerator flashCoroutine(EnemyAI enemy, float flashStr)
+        {
+            enemy.SetEnemyStunned(true, flashStr, playerHeldBy);
+            yield return new WaitForSeconds(flashStr);
+            yield return new WaitForEndOfFrame();
+            enemy.SetMovingTowardsTargetPlayer(playerHeldBy);
+            yield return new WaitForEndOfFrame();
         }
 
         float determineFlashStrength(Vector3 playerHeld, Vector3 entityHit)

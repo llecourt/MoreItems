@@ -1,7 +1,7 @@
 {
     "name": "MoreItems",
     "author": "LeoLR",
-    "version_number": "8.0.0",
+    "version_number": "8.1.0",
     "website_url": "https://twitch.tv/arkait_",
     "description": "Adds 3 shop items and 8 scraps",
     "dependencies": [

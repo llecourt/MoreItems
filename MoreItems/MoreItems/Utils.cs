@@ -85,22 +85,19 @@ namespace MoreItems
 
                 if (enemy != null && !hitEntities.Exists(i => i == enemyColliderRoot.gameObject.GetInstanceID()))
                 {
-                    if (!enemy.isEnemyDead)
-                    {
-                        hitEntities.Add(enemyColliderRoot.gameObject.GetInstanceID());
-                        var blocked = Physics.Linecast(
-                            enemy.transform.position + Vector3.up * 0.5f,
+                    hitEntities.Add(enemyColliderRoot.gameObject.GetInstanceID());
+                    var blocked = Physics.Linecast(
+                        enemy.transform.position + Vector3.up * 0.5f,
                             go.transform.position + Vector3.up * (increaseHeightForLinecast ? 0.5f : 0f),
-                            StartOfRound.Instance.collidersAndRoomMaskAndDefault
-                        );
-                        if (!blocked)
+                        StartOfRound.Instance.collidersAndRoomMaskAndDefault
+                    );
+                    if (!blocked)
+                    {
+                        if (enemy.creatureVoice != null && enemy.dieSFX != null)
                         {
-                            if (enemy.creatureVoice != null && enemy.dieSFX != null)
-                            {
-                                enemy.creatureVoice.PlayOneShot(enemy.dieSFX);
-                            }
-                            enemy.KillEnemy(true);
+                            enemy.creatureVoice.PlayOneShot(enemy.dieSFX);
                         }
+                        enemy.KillEnemy(true);
                     }
                 }
             }

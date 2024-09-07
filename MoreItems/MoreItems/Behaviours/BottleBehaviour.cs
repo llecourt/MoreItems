@@ -75,7 +75,7 @@ namespace MoreItems.Behaviours
             yield return new WaitForSeconds(4f);
 
             playerHeldBy.drunkness = 1f;
-            playerHeldBy.drunknessSpeed = 0.5f;
+            playerHeldBy.drunknessSpeed = 0.35f;
             playerHeldBy.activatingItem = false;
             playerHeldBy.playerBodyAnimator.SetBool("useTZPItem", false);
 

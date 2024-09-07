@@ -160,13 +160,15 @@ namespace MoreItems.Behaviours
             Ray ray = new Ray(initialPosition + Vector3.up * 0.1f, direction);
             float distance = 20f;
 
-            while (Physics.Linecast(ray.GetPoint(0f), ray.GetPoint(distance), StartOfRound.Instance.collidersAndRoomMaskAndDefault))
+            while (Physics.Linecast(ray.GetPoint(0f), ray.GetPoint(distance), StartOfRound.Instance.collidersAndRoomMaskAndDefault) && distance > 0f)
             {
                 distance -= 1f;
             }
+            distance -= 1f;
 
-            var finalDistance = distance > 0 ? distance - 0.5f : distance;
-            var finalPosition = ray.GetPoint(finalDistance);
+            if (distance <= 0f) return;
+
+            var finalPosition = ray.GetPoint(distance);
 
             while (currentTime < time)
             {

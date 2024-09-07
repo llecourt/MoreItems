@@ -42,14 +42,6 @@ namespace MoreItems.Behaviours
                         playerSlipping.Add(player);
                         StartCoroutine(TriggerSlip(player));
                     }
-
-                    var enemyColliderRoot = collider.transform.root;
-                    var enemy = enemyColliderRoot.GetComponent<EnemyAI>();
-
-                    if(enemy != null && !enemySlipping.Exists(i => i.GetInstanceID() == enemy.GetInstanceID())) {
-                        enemySlipping.Add(enemy);
-                        StartCoroutine(TriggerEnemySlip(enemyColliderRoot.gameObject));
-                    }
                 }
             }
         }
@@ -75,41 +67,6 @@ namespace MoreItems.Behaviours
             }
             playerSlipping.Remove(player);
             player.disableMoveInput = false;
-        }
-
-        IEnumerator TriggerEnemySlip(GameObject go)
-        {
-            var rb = go.transform.GetComponentInChildren<Rigidbody>();
-            if (rb != null)
-            {
-                var timer = 0f;
-                playSlipSoundServerRpc();
-                var startPos = go.transform.position;
-                yield return new WaitForSeconds(0.1f);
-                var secondPos = go.transform.position;
-                var direction = secondPos - startPos;
-                var enemy = go.transform.GetComponent<EnemyAI>();
-
-                enemy.enabled = false;
-                enemy.creatureAnimator.enabled = false;
-                rb.isKinematic = false;
-                rb.constraints = RigidbodyConstraints.FreezeAll;
-                
-                while (timer < slipTime)
-                {
-                    rb.MovePosition(go.transform.position + direction * Time.fixedDeltaTime * 1500);
-                    timer += Time.fixedDeltaTime;
-                    yield return new WaitForEndOfFrame();
-                }
-
-                rb.constraints = RigidbodyConstraints.None;
-                rb.isKinematic = true;
-                enemy.creatureAnimator.enabled = true;
-                enemy.enabled = true;
-
-                enemySlipping.Remove(enemy);
-            }
-            yield return new WaitForEndOfFrame();
         }
 
         [ServerRpc(RequireOwnership = false)]
