@@ -14,7 +14,7 @@ namespace MoreItems
     {
         const string guid = "LeoLR.MoreItems";
         const string name = "MoreItems";
-        const string version = "8.3.0";
+        const string version = "8.4.0";
 
         Harmony harmony = new Harmony("LeoLR.MoreItems");
         public static Plugin instance;
@@ -46,7 +46,7 @@ namespace MoreItems
             NetworkPrefabs.RegisterNetworkPrefab(dynamite.spawnPrefab);
             TerminalNode dynamiteNode = ScriptableObject.CreateInstance<TerminalNode>();
             dynamiteNode.clearPreviousText = true;
-            dynamiteNode.displayText = "Explodes, fuse length is variable";
+            dynamiteNode.displayText = "Explodes after a few seconds";
             Items.RegisterShopItem(dynamite, null, null, dynamiteNode, 50);
 
             var karma = bundle.LoadAsset<Item>("Assets/Karma/KarmaItem.asset");
@@ -113,6 +113,7 @@ namespace MoreItems
             Utilities.FixMixerGroups(bottle.spawnPrefab);
             NetworkPrefabs.RegisterNetworkPrefab(bottle.spawnPrefab);
             Items.RegisterScrap(bottle, 15, Levels.LevelTypes.All);
+
 
             harmony.PatchAll();
         }

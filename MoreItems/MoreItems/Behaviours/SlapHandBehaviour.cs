@@ -134,20 +134,40 @@ namespace MoreItems.Behaviours
                 {
                     hitEntities.Add(playerColliderGameObject.GetInstanceID());
                     player.DamagePlayer(0);
-                    knockback(playerColliderGameObject);
+                    knockbackPlayer(playerColliderGameObject);
                 }
 
                 if (enemy != null && !hitEntities.Exists(i => i == enemyColliderRoot.gameObject.GetInstanceID()))
                 {
                     hitEntities.Add(enemyColliderRoot.gameObject.GetInstanceID());
-                    knockback(enemyColliderRoot.gameObject);
+                    knockbackEnemy(enemyColliderRoot);
                 }
             }
         }
 
-        void knockback(GameObject entity)
+        void knockbackPlayer(GameObject player)
         {
             float currentTime = 0f;
+            var finalPosition = determineFinalPosition(player);
+            while (currentTime < time)
+            {
+                player.transform.position = Vector3.MoveTowards(player.transform.position, finalPosition, currentTime);
+                currentTime += Time.deltaTime;
+            }
+        }
+
+        void knockbackEnemy(Transform enemyColliderRoot)
+        {
+            var teleportPos = determineFinalPosition(enemyColliderRoot.gameObject);
+            var enemy = enemyColliderRoot.GetComponent<EnemyAI>();
+            enemy.serverPosition = teleportPos;
+            enemy.transform.position = teleportPos;
+            enemy.agent.Warp(teleportPos);
+            enemy.SyncPositionToClients();
+        }
+
+        Vector3 determineFinalPosition(GameObject entity)
+        {
             var initialPosition = entity.transform.position;
             var playerLookingDirection = playerHeldBy.gameplayCamera.transform.forward;
             if (playerLookingDirection.y < 0)
@@ -166,15 +186,7 @@ namespace MoreItems.Behaviours
             }
             distance -= 1f;
 
-            if (distance <= 0f) return;
-
-            var finalPosition = ray.GetPoint(distance);
-
-            while (currentTime < time)
-            {
-                entity.transform.position = Vector3.MoveTowards(entity.transform.position, finalPosition, currentTime);
-                currentTime += Time.deltaTime;
-            }
+            return ray.GetPoint(Math.Max(distance, 0));
         }
     }
 }
