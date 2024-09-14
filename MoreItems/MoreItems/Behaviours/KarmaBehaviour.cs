@@ -68,12 +68,9 @@ namespace MoreItems.Behaviours
             base.OnHitGround();
             StopChargingServerRpc(false);
             activated = false;
-            if (!coolingDown.Value && this.insertedBattery.charge > 0 && !broken.Value)
+            if (!coolingDown.Value && this.insertedBattery.charge > 0 && !broken.Value && Utils.isLocalPlayerHosting() && Random.Range(1, 20) == 1)
             {
-                if (UnityEngine.Random.Range(1, 20) == 1)
-                {
-                    ShootServerRpc();
-                }
+                ShootServerRpc();
             }
         }
 
