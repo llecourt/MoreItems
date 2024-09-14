@@ -13,8 +13,8 @@ namespace MoreItems.Behaviours
 
         float cooldown = 10f;
         float timeSinceShot = 0f;
-        float maxChargeBeforeShooting = 2.5f;
-        float maxChargeBeforeExplode = 3.5f;
+        float maxChargeBeforeShooting = 2f;
+        float maxChargeBeforeExplode = 2.9f;
         float chargeTime = 0f;
         float energyLostPerShot = 0.5f;
         
