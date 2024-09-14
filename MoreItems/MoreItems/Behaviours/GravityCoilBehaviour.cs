@@ -12,6 +12,7 @@ namespace MoreItems.Behaviours
 
         float baseJumpForce = 13f;
         float multiplier = 2f;
+        bool shouldPlayJumpSFX = false;
 
         PlayerControllerB boostedPlayer = null;
         
@@ -29,11 +30,21 @@ namespace MoreItems.Behaviours
             if (!active || playerHeldBy == null || !wasOwnerLastFrame || Utils.frameCount(10))
                 return;
 
-            if (playerHeldBy.playerActions.FindAction("Jump").IsPressed() && playerHeldBy.thisController.isGrounded && !playerHeldBy.inSpecialInteractAnimation 
-                && !playerHeldBy.inAnimationWithEnemy && !playerHeldBy.isClimbingLadder && !playerHeldBy.isPlayerDead && !playerHeldBy.inTerminalMenu 
-                && !playerHeldBy.isTypingChat && !playerHeldBy.isCrouching)
+            if (playerHeldBy.thisController.isGrounded && !playerHeldBy.inSpecialInteractAnimation && !playerHeldBy.inAnimationWithEnemy && !playerHeldBy.isClimbingLadder 
+                && !playerHeldBy.isPlayerDead && !playerHeldBy.inTerminalMenu && !playerHeldBy.isTypingChat && !playerHeldBy.isCrouching)
             {
-                PlayJumpSFXServerRpc();
+                if(playerHeldBy.playerActions.FindAction("Jump").IsPressed())
+                {
+                    if(shouldPlayJumpSFX)
+                    {
+                        shouldPlayJumpSFX = false;
+                        PlayJumpSFXServerRpc();
+                    }
+                }
+                else
+                {
+                    shouldPlayJumpSFX = true;
+                }
             }
         }
 

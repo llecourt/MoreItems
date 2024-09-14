@@ -14,7 +14,7 @@ namespace MoreItems
     {
         const string guid = "LeoLR.MoreItems";
         const string name = "MoreItems";
-        const string version = "8.5.0";
+        const string version = "8.6.0";
 
         Harmony harmony = new Harmony("LeoLR.MoreItems");
         public static Plugin instance;
